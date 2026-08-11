@@ -1,3 +1,14 @@
+# HISTORICAL — DO NOT RUN. Kept as the estate's origin record.
+#
+# This script created the original five VeritasVault repos in May 2025. Its
+# $Org default ("phoenixvc") and its branch-protection block record the
+# *intended* design, none of which survived: the repos were created under the
+# personal JustAGhosT account with no branch protection, and eight more repos
+# accreted outside this list.
+#
+# The consolidation target is now the neuralliquid org, not phoenixvc.
+# See docs/planning/estate-consolidation-spike.md §8.
+
 param(
     [string]$Org = "phoenixvc",
     [string[]]$Repos = @(
