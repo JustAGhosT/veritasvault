@@ -196,11 +196,17 @@
     border-bottom: 1px solid rgba(31,58,92,0.55); vertical-align: top;
   }
   td.lead { color: var(--text); font-weight: 600; }
+  /* row headers: semantically <th scope="row">, styled as a body cell */
+  th.lead {
+    font-size: 12.6px; letter-spacing: 0; text-transform: none;
+    color: var(--text); font-weight: 600; padding: 10px 12px 10px 0;
+    border-bottom: 1px solid rgba(31,58,92,0.55); vertical-align: top;
+  }
   .mono { font-family: Consolas, "Courier New", monospace; font-size: 11.4px; color: var(--cyan); }
 
-  table.compact td { font-size: 11.7px; padding: 7px 12px 7px 0; line-height: 1.4; }
+  table.compact td, table.compact th.lead { font-size: 11.7px; padding: 7px 12px 7px 0; line-height: 1.4; }
   table.compact th { padding-bottom: 7px; }
-  table.mid td { font-size: 12.1px; padding: 8px 12px 8px 0; line-height: 1.42; }
+  table.mid td, table.mid th.lead { font-size: 12.1px; padding: 8px 12px 8px 0; line-height: 1.42; }
   table.mid th { padding-bottom: 8px; }
 
   .pill {
@@ -609,13 +615,13 @@
           <h3>Status — stated precisely</h3>
           <table class="compact" style="margin-top:8px;">
             <tbody>
-              <tr><td class="lead" style="width:1.75in;">Specification</td>
+              <tr><th scope="row" class="lead" style="width:1.75in;">Specification</th>
               <td><span class="pill built">Complete</span> 45 documents</td></tr>
-              <tr><td class="lead">Data contracts</td>
+              <tr><th scope="row" class="lead">Data contracts</th>
               <td><span class="pill built">Complete</span> full input, view and result DTOs</td></tr>
-              <tr><td class="lead">Presentation layer</td>
+              <tr><th scope="row" class="lead">Presentation layer</th>
               <td><span class="pill progress">Shell</span> renders sample output</td></tr>
-              <tr><td class="lead">Solver &amp; ML estimator</td>
+              <tr><th scope="row" class="lead">Solver &amp; ML estimator</th>
               <td><span class="pill spec">Not built</span> the core Phase 1 deliverable</td></tr>
             </tbody>
           </table>
@@ -723,55 +729,55 @@
       </thead>
       <tbody>
         <tr>
-          <td class="lead">vv-landing</td>
+          <th scope="row" class="lead">vv-landing</th>
           <td>Dual-brand web platform — marketing, auth, dashboards, analytics, AI endpoints</td>
           <td>933 TS/TSX · ~87k LOC · 93 pages · 44 API routes · 455 components</td>
           <td>Jan 2026</td>
         </tr>
         <tr>
-          <td class="lead">vv</td>
+          <th scope="row" class="lead">vv</th>
           <td>.NET 9 market-data core — domain, CQRS, Cosmos persistence, event publication</td>
           <td>157 C# files · 12.1k LOC · 383 specification documents</td>
           <td>May 2026</td>
         </tr>
         <tr>
-          <td class="lead">vv-game-suite</td>
+          <th scope="row" class="lead">vv-game-suite</th>
           <td>WebGL / Phaser framework — risk-liquidity puzzles and governance simulations</td>
           <td>483 TS/TSX · 45 pages and routes</td>
           <td>Jul 2025</td>
         </tr>
         <tr>
-          <td class="lead">vv-docs</td>
+          <th scope="row" class="lead">vv-docs</th>
           <td>Docusaurus documentation portal — API reference, tutorials, design guidelines</td>
           <td>231 TS/TSX · 122 MD/MDX documents <span class="pill planned" style="margin-left:4px;">Archived</span></td>
           <td>Feb 2026</td>
         </tr>
         <tr>
-          <td class="lead">vv-chain-services</td>
+          <th scope="row" class="lead">vv-chain-services</th>
           <td>Blockchain microservices — Ethereum, Tezos, Postgres, Fastify</td>
           <td>90 files · 12 Python · 5 C# · 4 test files</td>
           <td>Jun 2025</td>
         </tr>
         <tr>
-          <td class="lead">vv-iac</td>
+          <th scope="row" class="lead">vv-iac</th>
           <td>Azure infrastructure as code with what-if validation and gated promotion</td>
           <td>42 Bicep templates · 64 files</td>
           <td>May 2025</td>
         </tr>
         <tr>
-          <td class="lead">vv-chain</td>
+          <th scope="row" class="lead">vv-chain</th>
           <td>Cross-chain risk intelligence — on-chain contracts, TVL and protocol health</td>
           <td>10 Solidity contracts</td>
           <td>May 2025</td>
         </tr>
         <tr>
-          <td class="lead">vv-auth · vv-auth-frontend-demo</td>
+          <th scope="row" class="lead">vv-auth · vv-auth-frontend-demo</th>
           <td>Authentication service and reference front end</td>
           <td>109 TS/TSX across both</td>
           <td>Jul 2025</td>
         </tr>
         <tr>
-          <td class="lead">cognitive-mesh-nexus</td>
+          <th scope="row" class="lead">cognitive-mesh-nexus</th>
           <td>AI mesh integration, plus shared developer tooling in vv-dev-tools</td>
           <td>60 TS/TSX · 32k of PowerShell tooling</td>
           <td>Jul 2025</td>
@@ -862,63 +868,63 @@
       </thead>
       <tbody>
         <tr>
-          <td class="lead">Production deployment</td>
+          <th scope="row" class="lead">Production deployment</th>
           <td><span class="pill built">Live</span></td>
           <td>Serving on Vercel at veritasvault.net — marketing, pricing, solutions, whitepaper and
           demo routes publicly reachable; dashboards correctly behind authentication.</td>
         </tr>
         <tr>
-          <td class="lead">Dual-brand web application</td>
+          <th scope="row" class="lead">Dual-brand web application</th>
           <td><span class="pill built">Built</span></td>
           <td>93 pages across corporate and standard tiers, 455 components, unified header/footer,
           theming, version selection and guided demo mode.</td>
         </tr>
         <tr>
-          <td class="lead">Dashboards &amp; analytics</td>
+          <th scope="row" class="lead">Dashboards &amp; analytics</th>
           <td><span class="pill built">Built</span></td>
           <td>36 dashboard views — portfolio, treasury, risk, voting, strategies, pools, performance,
           on/off-chain — with Recharts visualisation and funnel reporting.</td>
         </tr>
         <tr>
-          <td class="lead">Auth, data &amp; API layer</td>
+          <th scope="row" class="lead">Auth, data &amp; API layer</th>
           <td><span class="pill built">Built</span></td>
           <td>44 API routes, NextAuth with GitHub and social login, Supabase Postgres with 14
           sequential migrations plus seed data.</td>
         </tr>
         <tr>
-          <td class="lead">Market data core (.NET)</td>
+          <th scope="row" class="lead">Market data core (.NET)</th>
           <td><span class="pill built">Built</span></td>
           <td>Six versioned entity types over <span class="mono">BaseMarketData</span>; Cosmos DB
           repository partitioned on <span class="mono">/assetId</span> with optimistic concurrency;
           MediatR CQRS; Event Grid and MassTransit publication.</td>
         </tr>
         <tr>
-          <td class="lead">External data integrations</td>
+          <th scope="row" class="lead">External data integrations</th>
           <td><span class="pill built">Built</span></td>
           <td>DefiLlama TVL, Goldsky protocol indexing and CoinGecko market data, each with retry,
           exponential backoff and explicit fallback handling.</td>
         </tr>
         <tr>
-          <td class="lead">Black-Litterman engine</td>
+          <th scope="row" class="lead">Black-Litterman engine</th>
           <td><span class="pill spec">Specified</span></td>
           <td>45 documents and complete data contracts; the UI renders sample output. The solver
           and ML covariance estimator are not implemented — this is the headline Phase 1 build.</td>
         </tr>
         <tr>
-          <td class="lead">AI features</td>
+          <th scope="row" class="lead">AI features</th>
           <td><span class="pill progress">Partial</span></td>
           <td>Five endpoints live — pool analysis, strategy generation, risk assessment,
           visualisation. Model governance (registry, fairness, drift) remains specified only.</td>
         </tr>
         <tr>
-          <td class="lead">Automated testing</td>
+          <th scope="row" class="lead">Automated testing</th>
           <td><span class="pill progress">Weak</span></td>
           <td>Backend at 11.5% line coverage across 15 test files; the web platform has
           <strong style="color:var(--amber);">no test files at all</strong>. The single largest
           engineering gap.</td>
         </tr>
         <tr>
-          <td class="lead">Risk engine, governance, bridging</td>
+          <th scope="row" class="lead">Risk engine, governance, bridging</th>
           <td><span class="pill spec">Specified</span></td>
           <td>Contract, event and security specification across 383 documents; UI surfaces exist,
           but the enforcing backend domains are not yet implemented.</td>
@@ -1052,13 +1058,13 @@
               <tr><th style="width:1.5in;">Approach</th><th>Structural limitation</th></tr>
             </thead>
             <tbody>
-              <tr><td class="lead">Retail DeFi protocols</td>
+              <tr><th scope="row" class="lead">Retail DeFi protocols</th>
               <td>No audit trail designed as evidence; compliance bolted on post-hoc.</td></tr>
-              <tr><td class="lead">Traditional data vendors</td>
+              <tr><th scope="row" class="lead">Traditional data vendors</th>
               <td>Strong provenance, but no on-chain settlement or programmable policy enforcement.</td></tr>
-              <tr><td class="lead">Custody-only providers</td>
+              <tr><th scope="row" class="lead">Custody-only providers</th>
               <td>Solve asset safety, not valuation defensibility or risk-policy enforcement.</td></tr>
-              <tr><td class="lead">In-house institutional builds</td>
+              <tr><th scope="row" class="lead">In-house institutional builds</th>
               <td>Expensive, slow, and rebuilt independently at every institution.</td></tr>
             </tbody>
           </table>
@@ -1226,43 +1232,43 @@
       </thead>
       <tbody>
         <tr>
-          <td class="lead">Test coverage</td>
+          <th scope="row" class="lead">Test coverage</th>
           <td>The web platform has no automated tests; the backend sits at 11.5% line coverage.</td>
           <td>Coverage is the Phase 1 exit gate, starting with API routes and the risk surfaces.</td>
         </tr>
         <tr>
-          <td class="lead">Focus &amp; continuity</td>
+          <th scope="row" class="lead">Focus &amp; continuity</th>
           <td>Last substantial VeritasVault push was January 2026, while four sister projects were
           updated this week.</td>
           <td>The raise buys concentrated attention; sister infrastructure is reused, not rebuilt.</td>
         </tr>
         <tr>
-          <td class="lead">Front-end / back-end integration</td>
+          <th scope="row" class="lead">Front-end / back-end integration</th>
           <td>Dashboards partly run on fallback and demo data rather than the .NET market-data core.</td>
           <td>Wire the existing UI to live services as the first Phase 1 deliverable.</td>
         </tr>
         <tr>
-          <td class="lead">Estate fragmentation</td>
+          <th scope="row" class="lead">Estate fragmentation</th>
           <td>Eleven repositories with divergent activity raise coordination and drift cost.</td>
           <td>Consolidate or archive dormant repos; one release process across the active core.</td>
         </tr>
         <tr>
-          <td class="lead">Execution &amp; scope</td>
+          <th scope="row" class="lead">Execution &amp; scope</th>
           <td>Seven-domain ambition against a small team; Phase 1 slipped against plan.</td>
           <td>Strict phase gating; treat scope reduction as the default lever.</td>
         </tr>
         <tr>
-          <td class="lead">Regulatory uncertainty</td>
+          <th scope="row" class="lead">Regulatory uncertainty</th>
           <td>Rules across jurisdictions are unsettled and may force compliance redesign.</td>
           <td>Pluggable jurisdiction-specific policy modules; standing regulatory monitoring.</td>
         </tr>
         <tr>
-          <td class="lead">Bridge &amp; adapter exploits</td>
+          <th scope="row" class="lead">Bridge &amp; adapter exploits</th>
           <td>Cross-chain components are the sector's highest-value attack surface.</td>
           <td>Additional review, dedicated monitoring, circuit breakers, staged rollout.</td>
         </tr>
         <tr>
-          <td class="lead">Key-person concentration</td>
+          <th scope="row" class="lead">Key-person concentration</th>
           <td>Engineering depth currently rests with a single technical founder.</td>
           <td>Specification-first practice keeps the system legible to incoming engineers; first
           hires are the priority on close.</td>

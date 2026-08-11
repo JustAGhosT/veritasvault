@@ -134,6 +134,12 @@
     border-bottom:1px solid var(--line); vertical-align:top;
   }
   td.lead { color:var(--ink); font-weight:600; }
+  /* row headers: semantically <th scope="row">, styled as a body cell */
+  th.lead {
+    font-size:12.5px; letter-spacing:0; text-transform:none; color:var(--ink);
+    font-weight:600; padding:10px 12px 10px 0;
+    border-bottom:1px solid var(--line); vertical-align:top;
+  }
 
   .pill {
     display:inline-block; font-size:9.5px; letter-spacing:0.11em; text-transform:uppercase;
@@ -350,11 +356,11 @@
         <h3>What you record when you form a view</h3>
         <table style="margin-top:10px;">
           <tbody>
-            <tr><td class="lead" style="width:1.45in;">The view</td><td>Absolute (“this returns 8%”) or relative (“this beats that”)</td></tr>
-            <tr><td class="lead">Confidence</td><td>How strongly you hold it — this sets its influence</td></tr>
-            <tr><td class="lead">Rationale</td><td>Why you believe it, in your own words</td></tr>
-            <tr><td class="lead">Evidence</td><td>What you are basing it on</td></tr>
-            <tr><td class="lead">Expiry</td><td>When it should lapse if untested</td></tr>
+            <tr><th scope="row" class="lead" style="width:1.45in;">The view</th><td>Absolute (“this returns 8%”) or relative (“this beats that”)</td></tr>
+            <tr><th scope="row" class="lead">Confidence</th><td>How strongly you hold it — this sets its influence</td></tr>
+            <tr><th scope="row" class="lead">Rationale</th><td>Why you believe it, in your own words</td></tr>
+            <tr><th scope="row" class="lead">Evidence</th><td>What you are basing it on</td></tr>
+            <tr><th scope="row" class="lead">Expiry</th><td>When it should lapse if untested</td></tr>
           </tbody>
         </table>
       </div>
@@ -362,11 +368,11 @@
         <h3>What Sextant tells you back</h3>
         <table style="margin-top:10px;">
           <tbody>
-            <tr><td class="lead" style="width:1.45in;">Impact</td><td>How much this view actually moved your portfolio</td></tr>
-            <tr><td class="lead">Weight change</td><td>Exactly which holdings shifted, and by how much</td></tr>
-            <tr><td class="lead">Return effect</td><td>Expected return attributable to this view</td></tr>
-            <tr><td class="lead">Risk effect</td><td>Risk this view added — or removed</td></tr>
-            <tr><td class="lead">Total tilt</td><td>How far you now sit from a neutral market position</td></tr>
+            <tr><th scope="row" class="lead" style="width:1.45in;">Impact</th><td>How much this view actually moved your portfolio</td></tr>
+            <tr><th scope="row" class="lead">Weight change</th><td>Exactly which holdings shifted, and by how much</td></tr>
+            <tr><th scope="row" class="lead">Return effect</th><td>Expected return attributable to this view</td></tr>
+            <tr><th scope="row" class="lead">Risk effect</th><td>Risk this view added — or removed</td></tr>
+            <tr><th scope="row" class="lead">Total tilt</th><td>How far you now sit from a neutral market position</td></tr>
           </tbody>
         </table>
       </div>
@@ -445,38 +451,38 @@
       </thead>
       <tbody>
         <tr>
-          <td class="lead">Platform &amp; dashboards</td>
+          <th scope="row" class="lead">Platform &amp; dashboards</th>
           <td><span class="pill live">Ready</span></td>
           <td>Portfolio, pools, strategies, risk, analytics and performance views are built and
           usable today.</td>
         </tr>
         <tr>
-          <td class="lead">Black-Litterman allocation</td>
+          <th scope="row" class="lead">Black-Litterman allocation</th>
           <td><span class="pill soon">In build</span></td>
           <td>The method is specified in full and the data contracts are settled, but the solver is
           not yet written — today the interface shows worked examples, not your live allocation.
           This is what the early group is funding, and the first thing you would see land.</td>
         </tr>
         <tr>
-          <td class="lead">Demo mode</td>
+          <th scope="row" class="lead">Demo mode</th>
           <td><span class="pill live">Ready</span></td>
           <td>Live now at veritasvault.net/standard-demo — walk the interface without connecting a
           wallet or committing assets.</td>
         </tr>
         <tr>
-          <td class="lead">Live market data throughout</td>
+          <th scope="row" class="lead">Live market data throughout</th>
           <td><span class="pill soon">In progress</span></td>
           <td>Some views still run on reference data while we complete the connection to our live
           market-data service. We will tell you which, on the day you join.</td>
         </tr>
         <tr>
-          <td class="lead">Automated rebalancing</td>
+          <th scope="row" class="lead">Automated rebalancing</th>
           <td><span class="pill soon">Coming</span></td>
           <td>Execution will remain your decision by design — Sextant recommends, it does not trade
           on your behalf.</td>
         </tr>
         <tr>
-          <td class="lead">Independent security audit</td>
+          <th scope="row" class="lead">Independent security audit</th>
           <td><span class="pill soon">Coming</span></td>
           <td>The architecture is designed for external review and scheduled for it. It has not yet
           been completed.</td>

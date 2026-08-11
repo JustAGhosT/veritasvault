@@ -96,6 +96,12 @@
   th { text-align:left; font-size:9.8px; letter-spacing:0.15em; text-transform:uppercase; color:var(--dim); font-weight:600; padding:0 12px 9px 0; border-bottom:1px solid var(--line); }
   td { font-size:12.4px; color:var(--muted); padding:9px 12px 9px 0; border-bottom:1px solid rgba(31,58,92,0.55); vertical-align:top; }
   td.lead { color:var(--text); font-weight:600; }
+  /* row headers: semantically <th scope="row">, styled as a body cell */
+  th.lead {
+    font-size:12.4px; letter-spacing:0; text-transform:none; color:var(--text);
+    font-weight:600; padding:9px 12px 9px 0;
+    border-bottom:1px solid rgba(31,58,92,0.55); vertical-align:top;
+  }
   .mono { font-family:Consolas,"Courier New",monospace; font-size:11.4px; color:var(--cyan); }
 
   .pill { display:inline-block; font-size:9.5px; letter-spacing:0.11em; text-transform:uppercase; padding:3px 8px; border-radius:2px; font-weight:600; }
@@ -360,11 +366,11 @@
         <h3>What a view records</h3>
         <table style="margin-top:10px;">
           <tbody>
-            <tr><td class="lead" style="width:1.55in;">Rationale</td><td>Written justification, stored with the view</td></tr>
-            <tr><td class="lead">Supporting evidence</td><td>References backing the position taken</td></tr>
-            <tr><td class="lead">Author &amp; timestamp</td><td>Who formed the view, and when</td></tr>
-            <tr><td class="lead">Confidence</td><td>Explicit weight given to the view</td></tr>
-            <tr><td class="lead">Expiry</td><td>Views lapse rather than persisting silently</td></tr>
+            <tr><th scope="row" class="lead" style="width:1.55in;">Rationale</th><td>Written justification, stored with the view</td></tr>
+            <tr><th scope="row" class="lead">Supporting evidence</th><td>References backing the position taken</td></tr>
+            <tr><th scope="row" class="lead">Author &amp; timestamp</th><td>Who formed the view, and when</td></tr>
+            <tr><th scope="row" class="lead">Confidence</th><td>Explicit weight given to the view</td></tr>
+            <tr><th scope="row" class="lead">Expiry</th><td>Views lapse rather than persisting silently</td></tr>
           </tbody>
         </table>
       </div>
@@ -372,11 +378,11 @@
         <h3>What the result reports back</h3>
         <table style="margin-top:10px;">
           <tbody>
-            <tr><td class="lead" style="width:1.55in;">Impact score</td><td>How much each view moved the portfolio</td></tr>
-            <tr><td class="lead">Weight changes</td><td>Per-asset delta attributable to that view</td></tr>
-            <tr><td class="lead">Return contribution</td><td>Expected return traced to the view</td></tr>
-            <tr><td class="lead">Risk contribution</td><td>Risk added or removed by the view</td></tr>
-            <tr><td class="lead">Tilt magnitude</td><td>Total divergence from market equilibrium</td></tr>
+            <tr><th scope="row" class="lead" style="width:1.55in;">Impact score</th><td>How much each view moved the portfolio</td></tr>
+            <tr><th scope="row" class="lead">Weight changes</th><td>Per-asset delta attributable to that view</td></tr>
+            <tr><th scope="row" class="lead">Return contribution</th><td>Expected return traced to the view</td></tr>
+            <tr><th scope="row" class="lead">Risk contribution</th><td>Risk added or removed by the view</td></tr>
+            <tr><th scope="row" class="lead">Tilt magnitude</th><td>Total divergence from market equilibrium</td></tr>
           </tbody>
         </table>
       </div>
