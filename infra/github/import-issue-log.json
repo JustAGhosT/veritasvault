@@ -1,0 +1,197 @@
+[
+  {
+    "Repo": "vv-game-suite",
+    "Number": "1",
+    "Title": "Create mono-repo skeleton (game-suite)"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "1",
+    "Title": "Migrate landing POC to vv-landing"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "2",
+    "Title": "Seed Vercel preview + prod projects"
+  },
+  {
+    "Repo": "vv-docs",
+    "Number": "1",
+    "Title": "Bootstrap Docusaurus site"
+  },
+  {
+    "Repo": "vv-iac",
+    "Number": "1",
+    "Title": "Provision staging VPC & EKS"
+  },
+  {
+    "Repo": "vv-iac",
+    "Number": "2",
+    "Title": "Create GitHub Actions base templates"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "3",
+    "Title": "Cookie-based version router"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "4",
+    "Title": "Marketing hero MDX conversion"
+  },
+  {
+    "Repo": "vv-game-suite",
+    "Number": "2",
+    "Title": "Real-time signal feed WebSocket"
+  },
+  {
+    "Repo": "vv-game-suite",
+    "Number": "3",
+    "Title": "Design tokens npm publish"
+  },
+  {
+    "Repo": "vv-chain-services",
+    "Number": "1",
+    "Title": "Fastify /signals endpoint"
+  },
+  {
+    "Repo": "vv-chain-services",
+    "Number": "2",
+    "Title": "Tezos + EVM indexer alpha"
+  },
+  {
+    "Repo": "vv-iac",
+    "Number": "3",
+    "Title": "RDS Postgres cluster (staging)"
+  },
+  {
+    "Repo": "vv-iac",
+    "Number": "4",
+    "Title": "Redis Global datastore (staging)"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "5",
+    "Title": "Contact form → API route + email"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "6",
+    "Title": "Cypress smoke & regression pack"
+  },
+  {
+    "Repo": "vv-game-suite",
+    "Number": "4",
+    "Title": "Leaderboard sorted-set"
+  },
+  {
+    "Repo": "vv-game-suite",
+    "Number": "5",
+    "Title": "Error tracking (Sentry)"
+  },
+  {
+    "Repo": "vv-chain-services",
+    "Number": "3",
+    "Title": "Risk-bot v1"
+  },
+  {
+    "Repo": "vv-chain-services",
+    "Number": "4",
+    "Title": "OpenAPI spec + Swagger UI"
+  },
+  {
+    "Repo": "vv-iac",
+    "Number": "5",
+    "Title": "CloudFront + ACM for static sites"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "7",
+    "Title": "Lighthouse budgets"
+  },
+  {
+    "Repo": "vv-docs",
+    "Number": "2",
+    "Title": "Launch docs v1"
+  },
+  {
+    "Repo": "vv-game-suite",
+    "Number": "6",
+    "Title": "Soft-conversion flow"
+  },
+  {
+    "Repo": "vv-game-suite",
+    "Number": "7",
+    "Title": "Pro-mode 5-minute gameplay"
+  },
+  {
+    "Repo": "vv-chain-services",
+    "Number": "5",
+    "Title": "JWT auth for /scores POST"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "8",
+    "Title": "Enterprise CTA split-test"
+  },
+  {
+    "Repo": "vv-docs",
+    "Number": "3",
+    "Title": "Docs localization (es)"
+  },
+  {
+    "Repo": "vv-iac",
+    "Number": "6",
+    "Title": "IaC prod promotion"
+  },
+  {
+    "Repo": "vv-chain-services",
+    "Number": "6",
+    "Title": "Prometheus ServiceMonitor"
+  },
+  {
+    "Repo": "vv-iac",
+    "Number": "7",
+    "Title": "Add WAF rules to CloudFront"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "9",
+    "Title": "Percy visual regression"
+  },
+  {
+    "Repo": "vv-chain-services",
+    "Number": "7",
+    "Title": "Rate-limit /signals"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "10",
+    "Title": "Edge redirect registry"
+  },
+  {
+    "Repo": "vv-docs",
+    "Number": "4",
+    "Title": "Docs version 2 + CLI autogen"
+  },
+  {
+    "Repo": "vv-chain-services",
+    "Number": "8",
+    "Title": "GraphQL Gateway PoC"
+  },
+  {
+    "Repo": "vv-game-suite",
+    "Number": "8",
+    "Title": "Global edge cache for price-ticks"
+  },
+  {
+    "Repo": "vv-landing",
+    "Number": "11",
+    "Title": "White-label landing instances"
+  },
+  {
+    "Repo": "vv-chain-services",
+    "Number": "9",
+    "Title": "Chaos testing for risk-bot"
+  }
+]
