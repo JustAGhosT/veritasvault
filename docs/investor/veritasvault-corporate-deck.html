@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Veritas Vault — Institutional Overview</title>
+<style>
+  @page { size: 13.333in 7.5in; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:#0A1628; --bg-2:#0D1D33; --panel:#12253F; --panel-2:#172C4A; --line:#1F3A5C;
+    --gold:#C9A961; --gold-lt:#E3C888; --cyan:#4EA8DE; --green:#4CAF7D; --amber:#D99A4E;
+    --text:#E9EFF7; --muted:#8CA3BE; --dim:#64809F;
+  }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    background:var(--bg); color:var(--text); font-size:15px; line-height:1.5;
+    counter-reset: slide section;
+  }
+  .slide {
+    width:13.333in; height:7.5in; padding:0.62in 0.78in 0.55in;
+    background:var(--bg); position:relative; overflow:hidden;
+    page-break-after:always; display:flex; flex-direction:column;
+    counter-increment: slide;
+  }
+  .slide.s { counter-increment: slide section; }
+  .slide:last-child { page-break-after:auto; }
+
+  .eyebrow {
+    font-size:10.5px; letter-spacing:0.19em; text-transform:uppercase;
+    color:var(--gold); font-weight:600; margin-bottom:9px;
+  }
+  .eyebrow.num::before { content: counter(section, decimal-leading-zero) " — "; }
+  h1.title {
+    font-family:Georgia,"Times New Roman",serif; font-size:34px; font-weight:400;
+    letter-spacing:-0.01em; line-height:1.15; margin-bottom:6px;
+  }
+  .subtitle { color:var(--muted); font-size:14.5px; max-width:8.9in; margin-bottom:20px; }
+  .rule { height:2px; width:54px; background:var(--gold); margin:12px 0 18px; }
+  .slide-num { position:absolute; bottom:0.34in; right:0.78in; font-size:10px; color:var(--dim); letter-spacing:0.08em; }
+  .slide-num::before { content: counter(slide, decimal-leading-zero); }
+  .footer-mark {
+    position:absolute; bottom:0.34in; left:0.78in; font-size:10px;
+    color:var(--dim); letter-spacing:0.14em; text-transform:uppercase;
+  }
+  .body-area { flex:1; min-height:0; }
+
+  .cover {
+    background:
+      radial-gradient(ellipse 120% 90% at 78% 18%, rgba(201,169,97,0.14), transparent 62%),
+      radial-gradient(ellipse 100% 80% at 12% 92%, rgba(78,168,222,0.10), transparent 60%),
+      linear-gradient(165deg,#0B1A2E 0%,#081221 100%);
+    justify-content:center; padding-left:1.05in;
+  }
+  .cover-grid {
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);
+    background-size:0.42in 0.42in;
+  }
+  .cover-inner { position:relative; z-index:2; }
+  .wordmark { font-family:Georgia,"Times New Roman",serif; font-size:70px; letter-spacing:-0.022em; line-height:1; }
+  .wordmark .vault { color:var(--gold); }
+  .cover-tag { font-size:19px; color:var(--text); font-weight:300; margin-top:16px; max-width:7.7in; line-height:1.45; }
+  .cover-meta { margin-top:42px; display:flex; gap:44px; font-size:12px; color:var(--muted); }
+  .cover-meta .k { display:block; font-size:9.5px; letter-spacing:0.17em; text-transform:uppercase; color:var(--dim); margin-bottom:5px; }
+  .cover-meta .v { color:var(--text); font-size:13px; }
+  .cover-rule { height:3px; width:88px; background:var(--gold); margin:26px 0 0; }
+
+  .cols-2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  .cols-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .cols-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .stack { display:flex; flex-direction:column; gap:12px; }
+
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:3px; padding:17px 18px; }
+  .card.accent { border-left:3px solid var(--gold); }
+  .card.cyan { border-left:3px solid var(--cyan); }
+  .card h3 { font-size:14.5px; font-weight:600; margin-bottom:7px; }
+  .card p { font-size:12.8px; color:var(--muted); line-height:1.52; }
+  .card .n { font-family:Georgia,serif; font-size:12px; color:var(--gold); display:block; margin-bottom:6px; letter-spacing:0.1em; }
+
+  .stat .fig { font-family:Georgia,serif; font-size:36px; color:var(--gold-lt); line-height:1; letter-spacing:-0.02em; }
+  .stat .lbl { font-size:10.2px; letter-spacing:0.13em; text-transform:uppercase; color:var(--dim); margin-top:9px; }
+  .stat .sub { font-size:11.8px; color:var(--muted); margin-top:6px; line-height:1.45; }
+
+  ul.ticks { list-style:none; }
+  ul.ticks li { font-size:12.9px; color:var(--muted); padding-left:17px; position:relative; margin-bottom:8px; line-height:1.5; }
+  ul.ticks li::before { content:""; position:absolute; left:0; top:7px; width:5px; height:5px; background:var(--gold); }
+  ul.ticks li strong { color:var(--text); font-weight:600; }
+  ul.ticks.cyan li::before { background:var(--cyan); }
+  ul.ticks.tight li { margin-bottom:6px; font-size:12.3px; }
+
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:9.8px; letter-spacing:0.15em; text-transform:uppercase; color:var(--dim); font-weight:600; padding:0 12px 9px 0; border-bottom:1px solid var(--line); }
+  td { font-size:12.4px; color:var(--muted); padding:9px 12px 9px 0; border-bottom:1px solid rgba(31,58,92,0.55); vertical-align:top; }
+  td.lead { color:var(--text); font-weight:600; }
+  .mono { font-family:Consolas,"Courier New",monospace; font-size:11.4px; color:var(--cyan); }
+
+  .pill { display:inline-block; font-size:9.5px; letter-spacing:0.11em; text-transform:uppercase; padding:3px 8px; border-radius:2px; font-weight:600; }
+  .pill.live { background:rgba(76,175,125,0.16); color:#7FD3A8; border:1px solid rgba(76,175,125,0.4); }
+  .pill.road { background:rgba(217,154,78,0.15); color:#E8B87A; border:1px solid rgba(217,154,78,0.38); }
+
+  .callout {
+    background:linear-gradient(100deg,rgba(201,169,97,0.10),rgba(201,169,97,0.02));
+    border:1px solid rgba(201,169,97,0.32); border-left:3px solid var(--gold);
+    border-radius:3px; padding:14px 18px;
+  }
+  .callout p { font-size:12.7px; color:var(--text); line-height:1.55; }
+  .callout .ct { font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:7px; }
+
+  .quote { font-family:Georgia,serif; font-size:20px; line-height:1.42; color:var(--text); font-style:italic; }
+  .quote .hl { color:var(--gold-lt); font-style:normal; }
+
+  /* BL flow diagram */
+  .flow { display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr; align-items:center; gap:0; }
+  .flow-box {
+    background:var(--panel); border:1px solid var(--line); border-top:2px solid var(--gold);
+    border-radius:2px; padding:13px 14px; height:100%;
+  }
+  .flow-box .fh { font-size:12.8px; font-weight:600; color:var(--text); margin-bottom:5px; }
+  .flow-box .fp { font-size:11.5px; color:var(--muted); line-height:1.45; }
+  .flow-arrow { text-align:center; color:var(--gold); font-size:17px; }
+
+  .tier {
+    background:var(--panel); border:1px solid var(--line); border-radius:3px; padding:16px 17px; height:100%;
+  }
+  .tier.mid { border-color:rgba(201,169,97,0.5); background:var(--panel-2); }
+  .tier .tn { font-size:17px; font-weight:600; margin-bottom:3px; }
+  .tier .td { font-size:11.6px; color:var(--dim); margin-bottom:11px; min-height:32px; }
+
+  .metric-row { display:flex; gap:26px; margin-top:6px; }
+  .metric-row .m .mv { font-family:Georgia,serif; font-size:24px; color:var(--gold-lt); line-height:1; }
+  .metric-row .m .ml { font-size:9.8px; letter-spacing:0.12em; text-transform:uppercase; color:var(--dim); margin-top:6px; }
+
+  .note { background:rgba(78,168,222,0.07); border:1px dashed rgba(78,168,222,0.42); border-radius:3px; padding:11px 15px; }
+  .note .nt { font-size:9.8px; letter-spacing:0.15em; text-transform:uppercase; color:var(--cyan); font-weight:600; margin-bottom:5px; }
+  .note p { font-size:11.8px; color:var(--muted); line-height:1.5; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="slide cover">
+  <div class="cover-grid"></div>
+  <div class="cover-inner">
+    <div class="eyebrow">Institutional-Grade Liquidity Management</div>
+    <div class="wordmark">Veritas<span class="vault">Vault</span></div>
+    <div class="cover-rule"></div>
+    <div class="cover-tag">
+      Treasury, portfolio optimisation and risk management for institutional digital-asset
+      operations — built on Black-Litterman allocation, with an audit trail that holds up under
+      scrutiny.
+    </div>
+    <div class="cover-meta">
+      <div><span class="k">For</span><span class="v">Institutional clients &amp; treasury operations</span></div>
+      <div><span class="k">Platform</span><span class="v">veritasvault.net</span></div>
+      <div><span class="k">Contact</span><span class="v">smit.jurie@gmail.com</span></div>
+    </div>
+  </div>
+  <div class="footer-mark">Veritas Vault</div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section class="slide s">
+  <div class="eyebrow num">The Problem</div>
+  <h1 class="title">Your mandate does not fit on-chain infrastructure</h1>
+  <p class="subtitle">Digital-asset yields are real. The operational apparatus a regulated
+  institution needs to capture them is not.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-3" style="margin-bottom:18px;">
+      <div class="card">
+        <span class="n">I</span>
+        <h3>Allocation by intuition</h3>
+        <p>Most on-chain treasury allocation is discretionary or naively yield-chasing. There is no
+        equilibrium anchor, no formal expression of house view, and no way to show a committee why
+        the portfolio is weighted as it is.</p>
+      </div>
+      <div class="card">
+        <span class="n">II</span>
+        <h3>Risk measured after the fact</h3>
+        <p>Protocol risk, counterparty exposure and drawdown are reconstructed from block explorers
+        and spreadsheets once something has already gone wrong, rather than enforced as limits at
+        the point of allocation.</p>
+      </div>
+      <div class="card">
+        <span class="n">III</span>
+        <h3>Evidence assembled retrospectively</h3>
+        <p>When an auditor, regulator or investment committee asks why a position was taken, the
+        answer is reconstructed from chat logs and memory — not produced from a system designed to
+        record it.</p>
+      </div>
+    </div>
+
+    <div class="cols-2" style="gap:22px;">
+      <div class="callout">
+        <div class="ct">What this costs you</div>
+        <p>Capital sits on the sidelines, not because the opportunity is unattractive, but because
+        the operating model cannot be defended to the people who must approve it. The constraint is
+        governance, not conviction.</p>
+      </div>
+      <div class="card">
+        <h3>What a mandate actually requires</h3>
+        <ul class="ticks" style="margin-top:4px;">
+          <li><strong>A defensible allocation method</strong> with an economic rationale</li>
+          <li><strong>Constraints enforced</strong>, not merely monitored</li>
+          <li><strong>Attribution</strong> — which decision produced which exposure</li>
+          <li><strong>An audit trail</strong> produced as a by-product of operating, not assembled later</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">Veritas Vault</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ THE PLATFORM ============ -->
+<section class="slide s">
+  <div class="eyebrow num">The Platform</div>
+  <h1 class="title">Three systems, one governed workflow</h1>
+  <p class="subtitle">Treasury, portfolio and risk operate over shared data, shared constraints and
+  a shared audit record — so a decision in one is visible and enforceable in the others.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-3" style="margin-bottom:18px;">
+      <div class="card accent">
+        <h3>Treasury Management</h3>
+        <ul class="ticks tight" style="margin-top:8px;">
+          <li>Black-Litterman allocation <span class="pill road">Roadmap</span></li>
+          <li>Comprehensive audit trails and compliance reporting <span class="pill live">Live</span></li>
+          <li>Multi-signature governance and approval workflows <span class="pill road">Roadmap</span></li>
+          <li>Automated rebalancing with institutional controls <span class="pill road">Roadmap</span></li>
+          <li>Formal verification of contract interactions <span class="pill road">Roadmap</span></li>
+        </ul>
+      </div>
+      <div class="card accent">
+        <h3>Portfolio Optimisation</h3>
+        <ul class="ticks tight" style="margin-top:8px;">
+          <li>Multi-factor optimisation models <span class="pill road">Roadmap</span></li>
+          <li>Cross-chain yield comparison and allocation</li>
+          <li>Custom constraints and institutional mandates</li>
+          <li>Scenario analysis and stress testing <span class="pill road">Roadmap</span></li>
+          <li>Threshold-triggered rebalancing <span class="pill road">Roadmap</span></li>
+        </ul>
+      </div>
+      <div class="card accent">
+        <h3>Risk Management</h3>
+        <ul class="ticks tight" style="margin-top:8px;">
+          <li>Protocol risk scoring and monitoring <span class="pill live">Live</span></li>
+          <li>Counterparty risk assessment</li>
+          <li>Real-time risk alerts and notifications</li>
+          <li>Value-at-Risk calculation <span class="pill road">Roadmap</span></li>
+          <li>Regulatory compliance frameworks <span class="pill road">Roadmap</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cols-2" style="gap:22px;">
+      <div class="card cyan">
+        <h3>Delivered as one interface</h3>
+        <p>Nineteen institutional dashboard views — treasury, portfolio and model portfolio,
+        on-chain and off-chain analytics, governance voting, risk assessment, performance
+        attribution, watchlists and an administrative console.</p>
+      </div>
+      <div class="note">
+        <div class="nt">Capability status</div>
+        <p>Items marked <em>Roadmap</em> — including the Black-Litterman engine itself — are
+        specified in full and scheduled, but not yet available for production use. We would rather
+        tell you that on this slide than during your diligence.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">Veritas Vault</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ BLACK-LITTERMAN ============ -->
+<section class="slide s">
+  <div class="eyebrow num">The Allocation Engine</div>
+  <h1 class="title">Black-Litterman, applied to digital assets</h1>
+  <p class="subtitle">The allocation framework institutional asset management already trusts —
+  brought to on-chain portfolios without abandoning its theoretical foundation. Specified in full;
+  in build now.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="flow" style="margin-bottom:20px;">
+      <div class="flow-box">
+        <div class="fh">1 · Market equilibrium</div>
+        <div class="fp">Start from the returns implied by market-capitalisation weights — what the
+        market as a whole already believes, rather than a forecast built from nothing.</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="fh">2 · Your views</div>
+        <div class="fp">Express house views as absolute or relative statements, each with a
+        confidence level, a written rationale and supporting evidence.</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="fh">3 · Posterior allocation</div>
+        <div class="fp">Bayesian blending produces posterior returns and optimal weights — tilted
+        toward your views in proportion to your confidence, and no further.</div>
+      </div>
+    </div>
+
+    <div class="cols-2" style="gap:24px;">
+      <div>
+        <div class="eyebrow" style="margin-bottom:11px;">Why it matters for a mandate</div>
+        <ul class="ticks">
+          <li><strong>No unexplained concentration.</strong> Weights derive from equilibrium plus
+          stated views, so extreme allocations cannot appear without a view to justify them.</li>
+          <li><strong>Confidence is explicit.</strong> A weakly held view moves the portfolio
+          weakly. Conviction is a parameter, not an argument.</li>
+          <li><strong>Constraints are first-class.</strong> Mandate limits, exposure bounds and
+          asset restrictions enter the optimisation directly.</li>
+          <li><strong>Results are interpretable.</strong> Every output is economically meaningful —
+          a requirement for committee approval and regulatory explanation.</li>
+        </ul>
+      </div>
+      <div class="stack">
+        <div class="card accent">
+          <h3>Enhanced where estimation is weakest</h3>
+          <p>The model's most fragile input is the covariance matrix. Our specification applies
+          machine-learning shrinkage estimation — evaluated against Frobenius, KL-divergence and
+          spectral loss, with ensemble architecture and explicit uncertainty quantification — to
+          reduce estimation noise without disturbing the Bayesian framework.</p>
+        </div>
+        <div class="card cyan">
+          <h3>AI that degrades gracefully</h3>
+          <p>AI assists parameter estimation, view suggestion and confidence calibration. Every
+          component is explainable, gated by validation, and optional: the platform remains fully
+          functional with AI enhancement switched off.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">Veritas Vault</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ AUDITABLE ALLOCATION ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Attribution &amp; Audit</div>
+  <h1 class="title">Every tilt traceable to a named view</h1>
+  <p class="subtitle">Auditability is not a reporting layer bolted on afterwards. It is the shape of
+  the data model itself.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-2" style="gap:26px; margin-bottom:16px;">
+      <div class="card">
+        <h3>What a view records</h3>
+        <table style="margin-top:10px;">
+          <tbody>
+            <tr><td class="lead" style="width:1.55in;">Rationale</td><td>Written justification, stored with the view</td></tr>
+            <tr><td class="lead">Supporting evidence</td><td>References backing the position taken</td></tr>
+            <tr><td class="lead">Author &amp; timestamp</td><td>Who formed the view, and when</td></tr>
+            <tr><td class="lead">Confidence</td><td>Explicit weight given to the view</td></tr>
+            <tr><td class="lead">Expiry</td><td>Views lapse rather than persisting silently</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>What the result reports back</h3>
+        <table style="margin-top:10px;">
+          <tbody>
+            <tr><td class="lead" style="width:1.55in;">Impact score</td><td>How much each view moved the portfolio</td></tr>
+            <tr><td class="lead">Weight changes</td><td>Per-asset delta attributable to that view</td></tr>
+            <tr><td class="lead">Return contribution</td><td>Expected return traced to the view</td></tr>
+            <tr><td class="lead">Risk contribution</td><td>Risk added or removed by the view</td></tr>
+            <tr><td class="lead">Tilt magnitude</td><td>Total divergence from market equilibrium</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="ct">The question this answers</div>
+      <p>“Why does the portfolio hold this position?” is answerable in one step — naming the view,
+      its author, its rationale, its confidence, and the precise weight change it produced. That is
+      the difference between a portfolio you can operate and one you can defend.</p>
+    </div>
+  </div>
+
+  <div class="footer-mark">Veritas Vault</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ SECURITY & COMPLIANCE ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Security &amp; Compliance</div>
+  <h1 class="title">Designed for the people who must approve it</h1>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-4" style="margin-bottom:18px;">
+      <div class="card accent">
+        <h3>Immutability &amp; audit</h3>
+        <p>Every entity is versioned and every state transition emits an append-only record.
+        Nothing is silently overwritten or retroactively edited.</p>
+      </div>
+      <div class="card accent">
+        <h3>Zero trust</h3>
+        <p>Every interface is authenticated, authorised and monitored by default — including
+        boundaries internal to the platform.</p>
+      </div>
+      <div class="card accent">
+        <h3>Defense in depth</h3>
+        <p>Layered controls, circuit breakers and multi-signature paths, so that a single
+        compromise is contained rather than systemic.</p>
+      </div>
+      <div class="card accent">
+        <h3>Regulatory-first</h3>
+        <p>Compliance surfaces are pluggable by jurisdiction rather than hard-coded to one
+        regulatory regime.</p>
+      </div>
+    </div>
+
+    <div class="cols-3" style="gap:18px;">
+      <div class="card cyan">
+        <h3>Architecture you can review</h3>
+        <p>Seven independently auditable domains — core infrastructure, risk and compliance, asset
+        and settlement, integration and analytics, governance and custody, AI/ML governance, and the
+        integration gateway. Each can be security-reviewed and certified on its own timeline rather
+        than as one monolithic approval.</p>
+      </div>
+      <div class="card cyan">
+        <h3>Governed AI</h3>
+        <p>Model registry and versioning, shadow and canary deployment, continuous fairness and
+        drift monitoring, and complete traceability of AI inputs and decisions — designed to meet
+        regulatory expectations for machine learning in financial decision-making.</p>
+      </div>
+      <div class="card cyan">
+        <h3>No model vendor lock-in</h3>
+        <p>AI workloads route through our own gateway with model abstraction and cost control, over
+        an agent platform with role-based access control and audit logging. Which model provider
+        sits behind it is a configuration decision — yours to constrain, and ours to evidence.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">Veritas Vault</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Engagement</div>
+  <h1 class="title">Three tiers, scaled to mandate complexity</h1>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-3" style="margin-bottom:18px;">
+      <div class="tier">
+        <div class="tn">Growth</div>
+        <div class="td">For emerging funds and treasury operations</div>
+        <ul class="ticks tight">
+          <li>Core treasury and portfolio dashboards</li>
+          <li>Black-Litterman allocation</li>
+          <li>Protocol risk scoring</li>
+          <li>Standard audit reporting</li>
+        </ul>
+      </div>
+      <div class="tier mid">
+        <div class="tn">Professional</div>
+        <div class="td">For established funds and financial institutions</div>
+        <ul class="ticks tight">
+          <li>Everything in Growth</li>
+          <li>Custom constraints and mandates</li>
+          <li>Cross-chain yield allocation</li>
+          <li>Counterparty risk assessment</li>
+          <li>Governance and approval workflows</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <div class="tn">Enterprise</div>
+        <div class="td">For large institutions with complex needs</div>
+        <ul class="ticks tight">
+          <li>Everything in Professional</li>
+          <li>Jurisdiction-specific compliance packages</li>
+          <li>Dedicated integration and adapters</li>
+          <li>Bespoke reporting and data residency</li>
+          <li>Direct engineering engagement</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note">
+      <div class="nt">Commercial terms</div>
+      <p>Pricing, contract length, service levels and support commitments are set per engagement
+      rather than published — mandates at this end of the market rarely fit a list price. We will
+      put concrete numbers against your requirements once we understand them.</p>
+    </div>
+  </div>
+
+  <div class="footer-mark">Veritas Vault</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ CLOSE ============ -->
+<section class="slide cover s" style="justify-content:center;">
+  <div class="cover-grid"></div>
+  <div class="cover-inner">
+    <div class="eyebrow num">Next Steps</div>
+    <h1 class="title" style="font-size:38px; max-width:8.8in; margin-bottom:18px;">
+      Allocation you can defend.<br>
+      <span style="color:var(--gold-lt);">Evidence you do not have to assemble.</span>
+    </h1>
+    <div class="cover-rule" style="margin:0 0 24px;"></div>
+
+    <div class="cols-3" style="max-width:10.6in; gap:22px;">
+      <div class="card accent" style="background:rgba(18,37,63,0.78);">
+        <h3>See it now</h3>
+        <p>The platform is live at <strong style="color:var(--gold-lt);">veritasvault.net</strong> —
+        solutions, pricing and whitepapers are open, and we will walk you through the dashboards
+        against your own asset universe.</p>
+      </div>
+      <div class="card accent" style="background:rgba(18,37,63,0.78);">
+        <h3>Model review</h3>
+        <p>A technical session on the Black-Litterman implementation, covariance estimation and
+        constraint handling.</p>
+      </div>
+      <div class="card accent" style="background:rgba(18,37,63,0.78);">
+        <h3>Architecture review</h3>
+        <p>Security, compliance and audit architecture, with your risk and technology teams
+        present.</p>
+      </div>
+    </div>
+
+    <div class="cover-meta" style="margin-top:38px;">
+      <div><span class="k">Contact</span><span class="v">Jurie Smit</span></div>
+      <div><span class="k">Email</span><span class="v">smit.jurie@gmail.com</span></div>
+      <div><span class="k">Platform</span><span class="v">veritasvault.net</span></div>
+    </div>
+  </div>
+  <div class="footer-mark">Veritas Vault</div>
+</section>
+
+</body>
+</html>

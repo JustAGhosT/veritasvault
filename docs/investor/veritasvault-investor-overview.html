@@ -1,0 +1,1384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VeritasVault — Investor Overview</title>
+<style>
+  @page { size: 13.333in 7.5in; margin: 0; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:        #0A1628;
+    --bg-2:      #0D1D33;
+    --panel:     #12253F;
+    --panel-2:   #172C4A;
+    --line:      #1F3A5C;
+    --gold:      #C9A961;
+    --gold-lt:   #E3C888;
+    --cyan:      #4EA8DE;
+    --green:     #4CAF7D;
+    --amber:     #D99A4E;
+    --red:       #C96A5E;
+    --violet:    #9B8AC4;
+    --text:      #E9EFF7;
+    --muted:     #8CA3BE;
+    --dim:       #64809F;
+  }
+
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    counter-reset: slide section;
+  }
+
+  .slide {
+    width: 13.333in;
+    height: 7.5in;
+    padding: 0.62in 0.78in 0.55in;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    counter-increment: slide;
+  }
+  .slide.s { counter-increment: slide section; }
+  .slide:last-child { page-break-after: auto; }
+
+  /* ---------- shared chrome ---------- */
+  .eyebrow {
+    font-size: 10.5px;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 9px;
+  }
+  .eyebrow.num::before { content: counter(section, decimal-leading-zero) " — "; }
+  h1.title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 34px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14.5px;
+    max-width: 8.9in;
+    margin-bottom: 20px;
+  }
+  .rule { height: 2px; width: 54px; background: var(--gold); margin: 12px 0 18px; }
+  .slide-num {
+    position: absolute;
+    bottom: 0.34in; right: 0.78in;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.08em;
+  }
+  .slide-num::before { content: counter(slide, decimal-leading-zero); }
+  .footer-mark {
+    position: absolute;
+    bottom: 0.34in; left: 0.78in;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .body-area { flex: 1; min-height: 0; }
+
+  /* ---------- cover ---------- */
+  .cover {
+    background:
+      radial-gradient(ellipse 120% 90% at 78% 18%, rgba(201,169,97,0.13), transparent 62%),
+      radial-gradient(ellipse 100% 80% at 12% 92%, rgba(78,168,222,0.10), transparent 60%),
+      linear-gradient(165deg, #0B1A2E 0%, #081221 100%);
+    justify-content: center;
+    padding-left: 1.05in;
+  }
+  .cover-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+    background-size: 0.42in 0.42in;
+  }
+  .cover-inner { position: relative; z-index: 2; }
+  .wordmark {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 72px;
+    letter-spacing: -0.022em;
+    line-height: 1;
+  }
+  .wordmark .vault { color: var(--gold); }
+  .cover-tag {
+    font-size: 19px;
+    color: var(--text);
+    font-weight: 300;
+    margin-top: 16px;
+    max-width: 7.7in;
+    line-height: 1.45;
+  }
+  .cover-meta { margin-top: 42px; display: flex; gap: 44px; font-size: 12px; color: var(--muted); }
+  .cover-meta .k {
+    display: block; font-size: 9.5px; letter-spacing: 0.17em;
+    text-transform: uppercase; color: var(--dim); margin-bottom: 5px;
+  }
+  .cover-meta .v { color: var(--text); font-size: 13px; }
+  .cover-rule { height: 3px; width: 88px; background: var(--gold); margin: 26px 0 0; }
+  .confidential {
+    position: absolute; top: 0.62in; right: 0.78in;
+    font-size: 9.5px; letter-spacing: 0.19em; text-transform: uppercase;
+    color: var(--dim); border: 1px solid var(--line); padding: 5px 11px; z-index: 2;
+  }
+
+  /* ---------- layout helpers ---------- */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .cols-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .cols-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .cols-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 3px; padding: 17px 18px; }
+  .card.accent { border-left: 3px solid var(--gold); }
+  .card.cyan   { border-left: 3px solid var(--cyan); }
+  .card.green  { border-left: 3px solid var(--green); }
+  .card.violet { border-left: 3px solid var(--violet); }
+  .card h3 { font-size: 14.5px; font-weight: 600; margin-bottom: 7px; }
+  .card p { font-size: 12.8px; color: var(--muted); line-height: 1.52; }
+  .card .n {
+    font-family: Georgia, serif; font-size: 12px; color: var(--gold);
+    display: block; margin-bottom: 6px; letter-spacing: 0.1em;
+  }
+
+  /* ---------- stat blocks ---------- */
+  .stat .fig {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 38px; color: var(--gold-lt); line-height: 1; letter-spacing: -0.02em;
+  }
+  .stat .fig.sm { font-size: 30px; }
+  .stat .lbl {
+    font-size: 10.2px; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--dim); margin-top: 9px;
+  }
+  .stat .sub { font-size: 11.8px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
+
+  /* ---------- lists ---------- */
+  ul.ticks { list-style: none; }
+  ul.ticks li {
+    font-size: 13px; color: var(--muted); padding-left: 17px;
+    position: relative; margin-bottom: 9px; line-height: 1.5;
+  }
+  ul.ticks li::before {
+    content: ""; position: absolute; left: 0; top: 7px;
+    width: 5px; height: 5px; background: var(--gold);
+  }
+  ul.ticks li strong { color: var(--text); font-weight: 600; }
+  ul.ticks.cyan li::before { background: var(--cyan); }
+  ul.ticks.tight li { margin-bottom: 6px; font-size: 12.4px; }
+
+  /* ---------- tables ---------- */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-size: 9.8px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--dim); font-weight: 600; padding: 0 12px 9px 0; border-bottom: 1px solid var(--line);
+  }
+  td {
+    font-size: 12.6px; color: var(--muted); padding: 10px 12px 10px 0;
+    border-bottom: 1px solid rgba(31,58,92,0.55); vertical-align: top;
+  }
+  td.lead { color: var(--text); font-weight: 600; }
+  .mono { font-family: Consolas, "Courier New", monospace; font-size: 11.4px; color: var(--cyan); }
+
+  table.compact td { font-size: 11.7px; padding: 7px 12px 7px 0; line-height: 1.4; }
+  table.compact th { padding-bottom: 7px; }
+  table.mid td { font-size: 12.1px; padding: 8px 12px 8px 0; line-height: 1.42; }
+  table.mid th { padding-bottom: 8px; }
+
+  .pill {
+    display: inline-block; font-size: 9.6px; letter-spacing: 0.11em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 2px; font-weight: 600;
+  }
+  .pill.built   { background: rgba(76,175,125,0.16);  color: #7FD3A8; border: 1px solid rgba(76,175,125,0.4); }
+  .pill.progress{ background: rgba(217,154,78,0.16);  color: #E8B87A; border: 1px solid rgba(217,154,78,0.4); }
+  .pill.spec    { background: rgba(78,168,222,0.14);  color: #86C5EA; border: 1px solid rgba(78,168,222,0.38); }
+  .pill.planned { background: rgba(140,163,190,0.12); color: #9FB4CC; border: 1px solid rgba(140,163,190,0.32); }
+
+  /* ---------- architecture ---------- */
+  .arch-layer {
+    border: 1px solid var(--line); background: var(--panel);
+    border-radius: 3px; padding: 10px 13px; margin-bottom: 8px;
+  }
+  .arch-layer .lname {
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); font-weight: 600; margin-bottom: 7px;
+  }
+  .arch-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 10.8px; background: var(--panel-2); border: 1px solid var(--line);
+    color: var(--muted); padding: 4px 9px; border-radius: 2px;
+  }
+  .chip.on { color: var(--text); border-color: rgba(201,169,97,0.5); background: rgba(201,169,97,0.09); }
+
+  .domain-box {
+    background: var(--panel); border: 1px solid var(--line);
+    border-top: 2px solid var(--cyan); border-radius: 2px; padding: 12px 13px;
+  }
+  .domain-box .dn { font-size: 12.8px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .domain-box .dd { font-size: 11.3px; color: var(--muted); line-height: 1.45; }
+  .domain-box .dt { font-size: 9.6px; color: var(--dim); margin-top: 8px; letter-spacing: 0.07em; }
+
+  /* ---------- dashboard grid ---------- */
+  .view {
+    background: var(--panel-2); border: 1px solid var(--line);
+    border-radius: 2px; padding: 8px 10px; font-size: 11.2px; color: var(--muted);
+  }
+  .view b { display: block; color: var(--text); font-size: 11.6px; font-weight: 600; margin-bottom: 2px; }
+
+  .brand-col {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 3px; padding: 15px 17px;
+  }
+  .brand-col.corp { border-top: 3px solid var(--gold); }
+  .brand-col.std  { border-top: 3px solid var(--cyan); }
+  .brand-col .bn { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .brand-col .bs { font-size: 11.4px; color: var(--dim); letter-spacing: 0.06em; margin-bottom: 10px; }
+
+  /* ---------- roadmap ---------- */
+  .phase {
+    display: grid; grid-template-columns: 1.35in 1fr; gap: 18px;
+    padding: 8px 0; border-bottom: 1px solid rgba(31,58,92,0.6);
+  }
+  .phase:last-child { border-bottom: none; }
+  .phase .pn { font-family: Georgia, serif; font-size: 15px; color: var(--gold); }
+  .phase .pn small {
+    display: block; font-family: "Segoe UI", sans-serif; font-size: 10px; color: var(--dim);
+    letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px;
+  }
+  .phase .pb h4 { font-size: 13.5px; margin-bottom: 5px; font-weight: 600; }
+  .phase .pb p { font-size: 12.1px; color: var(--muted); line-height: 1.5; }
+
+  /* ---------- callouts ---------- */
+  .callout {
+    background: linear-gradient(100deg, rgba(201,169,97,0.10), rgba(201,169,97,0.02));
+    border: 1px solid rgba(201,169,97,0.32); border-left: 3px solid var(--gold);
+    border-radius: 3px; padding: 14px 18px;
+  }
+  .callout p { font-size: 12.7px; color: var(--text); line-height: 1.55; }
+  .callout .ct {
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--gold); font-weight: 600; margin-bottom: 7px;
+  }
+  .note {
+    background: rgba(78,168,222,0.07); border: 1px dashed rgba(78,168,222,0.42);
+    border-radius: 3px; padding: 12px 15px;
+  }
+  .note .nt {
+    font-size: 9.8px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--cyan); font-weight: 600; margin-bottom: 6px;
+  }
+  .note p { font-size: 11.9px; color: var(--muted); line-height: 1.5; }
+
+  .quote { font-family: Georgia, serif; font-size: 21px; line-height: 1.42; color: var(--text); font-style: italic; }
+  .quote .hl { color: var(--gold-lt); font-style: normal; }
+
+  .snug .card { padding: 14px 16px; }
+  .snug .card p { font-size: 12.4px; }
+  .snug.stack { gap: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="slide cover">
+  <div class="cover-grid"></div>
+  <div class="confidential">Confidential</div>
+  <div class="cover-inner">
+    <div class="eyebrow">Institutional DeFi Infrastructure</div>
+    <div class="wordmark">Veritas<span class="vault">Vault</span></div>
+    <div class="cover-rule"></div>
+    <div class="cover-tag">
+      A dual-brand institutional DeFi platform — market data, risk analytics, treasury and
+      governance — engineered so that every action is provable, auditable and survivable under
+      regulatory and adversarial scrutiny.
+    </div>
+    <div class="cover-meta">
+      <div><span class="k">Document</span><span class="v">Investor Overview</span></div>
+      <div><span class="k">Stage</span><span class="v">Pre-seed · Pre-revenue</span></div>
+      <div><span class="k">Prepared</span><span class="v">August 2026</span></div>
+      <div><span class="k">Contact</span><span class="v">Jurie Smit · smit.jurie@gmail.com</span></div>
+    </div>
+  </div>
+  <div class="footer-mark">veritasvault.net</div>
+</section>
+
+<!-- ============ EXECUTIVE SUMMARY ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Executive Summary</div>
+  <h1 class="title">An institutional data and risk backbone for on-chain finance</h1>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-2" style="gap:28px;">
+      <div class="stack">
+        <div class="card accent">
+          <h3>The thesis</h3>
+          <p>Institutional capital cannot enter DeFi on retail-grade infrastructure. What is missing
+          is not another exchange or yield venue — it is the provable layer underneath: versioned
+          market data, enforceable risk policy, and an audit trail a regulator will accept.</p>
+        </div>
+        <div class="card cyan">
+          <h3>The product</h3>
+          <p>A dual-brand platform — an institutional tier and a private-client tier — designed
+          around a Black-Litterman allocation engine with ML-enhanced covariance estimation, over a
+          seven-domain architecture spanning market data, risk, settlement, governance and AI/ML.</p>
+        </div>
+        <div class="card green">
+          <h3>Where it stands</h3>
+          <p>Deployed and publicly reachable at veritasvault.net — a Next.js 15 application with 36
+          dashboard views and 44 API routes, over a .NET 9 market-data core, across eleven
+          repositories. Pre-revenue, and currently between development pushes.</p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="cols-2" style="gap:14px;">
+          <div class="card stat">
+            <div class="fig">1,816</div>
+            <div class="lbl">TypeScript / React files</div>
+            <div class="sub">Across the web platform, docs portal and game suite</div>
+          </div>
+          <div class="card stat">
+            <div class="fig">36</div>
+            <div class="lbl">Dashboard views</div>
+            <div class="sub">Portfolio, risk, treasury, voting, strategies, liquidity</div>
+          </div>
+          <div class="card stat">
+            <div class="fig sm">383</div>
+            <div class="lbl">Specification documents</div>
+            <div class="sub">Domain, contract and security specs under version control</div>
+          </div>
+          <div class="card stat">
+            <div class="fig sm">11</div>
+            <div class="lbl">Repositories</div>
+            <div class="sub">Web, backend, chain services, contracts, IaC, docs</div>
+          </div>
+        </div>
+
+        <div class="note">
+          <div class="nt">What this document deliberately omits</div>
+          <p>Market sizing, financial projections and the terms of the raise are not in this
+          document. Every figure here is measured from the codebase; anything that would have to be
+          estimated is discussed directly rather than asserted on a slide.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section class="slide s">
+  <div class="eyebrow num">The Problem</div>
+  <h1 class="title">DeFi was not built to be audited</h1>
+  <p class="subtitle">Every structural property that made decentralised finance fast to build is the
+  same property that makes it unusable for a regulated allocator.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-3" style="margin-bottom:18px;">
+      <div class="card">
+        <span class="n">I</span>
+        <h3>Data without provenance</h3>
+        <p>Prices, curves and surfaces arrive unversioned and unattributed. When a valuation is
+        challenged months later, there is no defensible record of what the system knew, when it
+        knew it, or which revision drove the trade.</p>
+      </div>
+      <div class="card">
+        <span class="n">II</span>
+        <h3>Risk policy that is advisory</h3>
+        <p>Limits, KYC/AML checks and exposure rules live in dashboards and off-chain processes
+        rather than being enforced at the point of execution. Controls that can be bypassed are
+        not controls.</p>
+      </div>
+      <div class="card">
+        <span class="n">III</span>
+        <h3>Compliance retrofitted late</h3>
+        <p>Protocols are built first and made compliant afterwards. The result is expensive
+        remediation, jurisdictional lock-out, and audit trails assembled after the fact from logs
+        that were never designed as evidence.</p>
+      </div>
+    </div>
+
+    <div class="cols-2" style="gap:22px;">
+      <div class="callout">
+        <div class="ct">The consequence</div>
+        <p>Institutions are structurally excluded. Not because the yield is unattractive, but
+        because no custodian, auditor or risk committee can sign off on infrastructure that cannot
+        prove its own history. The blocker is evidentiary, not economic.</p>
+      </div>
+      <div class="card">
+        <h3>Who feels this</h3>
+        <ul class="ticks" style="margin-top:4px;">
+          <li><strong>Asset managers</strong> needing defensible marks and position limits</li>
+          <li><strong>Custodians</strong> requiring multi-signature and time-locked control paths</li>
+          <li><strong>Compliance teams</strong> obliged to produce jurisdiction-specific reporting</li>
+          <li><strong>Auditors</strong> who must verify state independently, not take it on trust</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ SOLUTION ============ -->
+<section class="slide s">
+  <div class="eyebrow num">The Solution</div>
+  <h1 class="title">Provable by construction, not by policy</h1>
+  <p class="subtitle">VeritasVault inverts the usual order: the evidence layer is designed first, and
+  every feature above it inherits auditability rather than bolting it on.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-4" style="margin-bottom:20px;">
+      <div class="card accent">
+        <h3>Immutability &amp; audit</h3>
+        <p>Every entity is versioned and every state transition emits a signed, append-only record.
+        Nothing is silently overwritten.</p>
+      </div>
+      <div class="card accent">
+        <h3>Regulatory-first</h3>
+        <p>KYC/AML, position limits and reporting are domain contracts enforced at execution — not
+        dashboards observed after it.</p>
+      </div>
+      <div class="card accent">
+        <h3>Zero trust</h3>
+        <p>Every interface is authenticated, authorised and monitored by default, including internal
+        domain boundaries.</p>
+      </div>
+      <div class="card accent">
+        <h3>Defense in depth</h3>
+        <p>Layered controls, circuit breakers and multi-signature paths so that a single compromise
+        is contained, not fatal.</p>
+      </div>
+    </div>
+
+    <div class="cols-2" style="gap:24px;">
+      <div>
+        <div class="eyebrow" style="margin-bottom:12px;">Architecture that makes this enforceable</div>
+        <ul class="ticks">
+          <li><strong>Clean / hexagonal layering</strong> — the domain sits at the centre and depends
+          on nothing; infrastructure and API are adapters pointing inward.</li>
+          <li><strong>Explicit contracts per domain</strong> — each of the seven domains is
+          independently auditable, upgradeable and replaceable without cascading change.</li>
+          <li><strong>CQRS with mediated handlers</strong> — read and write paths separate, so audit
+          and query load never contend with settlement correctness.</li>
+          <li><strong>Versioned schemas and events</strong> — schema evolution is a first-class
+          concern, allowing historical records to remain readable and provable.</li>
+        </ul>
+      </div>
+      <div class="card" style="background:var(--bg-2);">
+        <div class="quote">
+          If you can't prove it, you can't do it.<br>
+          If you can't audit it, <span class="hl">it doesn't exist.</span>
+        </div>
+        <p style="margin-top:14px; font-size:11.5px; color:var(--dim); letter-spacing:0.06em;">
+          — VeritasVault domain design principle</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ THE PRODUCT / DUAL BRAND ============ -->
+<section class="slide s">
+  <div class="eyebrow num">The Product</div>
+  <h1 class="title">Two front doors, one platform</h1>
+  <p class="subtitle">A single codebase serves an institutional tier and a retail tier, with
+  separate authentication, navigation, theming and feature surfaces.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-2" style="gap:20px; margin-bottom:16px;">
+      <div class="brand-col corp">
+        <div class="bn">Corporate tier</div>
+        <div class="bs">INSTITUTIONAL · 19 DASHBOARD VIEWS</div>
+        <p style="font-size:12.4px; color:var(--muted); line-height:1.5;">
+          Treasury, portfolio and model-portfolio management, on-chain and off-chain analytics,
+          governance voting, risk assessment, flash loans, Tezos liquidity, watchlists, event
+          tracking and an admin console — plus a full marketing, pricing, compliance and
+          security-whitepaper site.</p>
+      </div>
+      <div class="brand-col std">
+        <div class="bn">Standard tier</div>
+        <div class="bs">RETAIL · 17 DASHBOARD VIEWS</div>
+        <p style="font-size:12.4px; color:var(--muted); line-height:1.5;">
+          Liquidity pool discovery and detail, strategy creation and management, risk assessment,
+          analytics with custom dimensions and funnel reporting, profile and settings — with a
+          guided demo mode for prospects who have not yet connected real capital.</p>
+      </div>
+    </div>
+
+    <div class="eyebrow" style="margin-bottom:10px;">Representative dashboard surface</div>
+    <div class="cols-5" style="margin-bottom:10px;">
+      <div class="view"><b>Portfolio</b>Holdings &amp; allocation</div>
+      <div class="view"><b>Treasury</b>Reserves &amp; flows</div>
+      <div class="view"><b>Risk assessment</b>Exposure scoring</div>
+      <div class="view"><b>Strategies</b>Create, compare, deploy</div>
+      <div class="view"><b>Liquidity pools</b>Discovery &amp; detail</div>
+    </div>
+    <div class="cols-5" style="margin-bottom:14px;">
+      <div class="view"><b>Voting</b>Governance proposals</div>
+      <div class="view"><b>On / off-chain</b>Split analytics</div>
+      <div class="view"><b>Performance</b>Attribution</div>
+      <div class="view"><b>AI analytics</b>Model insights</div>
+      <div class="view"><b>Flash loans</b>Execution monitor</div>
+    </div>
+
+    <div class="callout">
+      <div class="ct">Also implemented</div>
+      <p>Five AI endpoints — pool analysis, strategy generation, risk assessment and visualisation
+      generation — alongside authentication with social login, a fourteen-migration Postgres schema,
+      and live integrations to DefiLlama, Goldsky and CoinGecko.</p>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ BLACK-LITTERMAN ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Core Intellectual Property</div>
+  <h1 class="title">Black-Litterman, enhanced where it is weakest</h1>
+  <p class="subtitle">The allocation framework institutional asset management already trusts —
+  ported to digital assets, and improved at its most fragile input.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-2" style="gap:26px;">
+      <div class="stack snug">
+        <div class="card accent">
+          <h3>Why this is the wedge</h3>
+          <p>Black-Litterman is the language institutional allocators already speak. Arriving with
+          it removes the hardest part of an enterprise sale — arguing that the method deserves
+          trust — and reframes the conversation as implementation rather than principle.</p>
+        </div>
+        <div class="card cyan">
+          <h3>The technical contribution</h3>
+          <p>The model's most fragile input is the covariance matrix. The specification applies
+          ML shrinkage estimation — evaluated against Frobenius, KL-divergence and spectral loss,
+          with ensemble architecture and uncertainty quantification — reducing noise without
+          disturbing the Bayesian framework.</p>
+        </div>
+        <div class="card green">
+          <h3>Auditability inside the model</h3>
+          <p>Each view carries an author, rationale, evidence, confidence and expiry; each result
+          reports per-view impact, weight change and tilt from equilibrium. Allocation is
+          attributable by construction — the platform's thesis applied to the portfolio itself.</p>
+        </div>
+      </div>
+
+      <div class="stack snug">
+        <div class="cols-2" style="gap:14px;">
+          <div class="card stat">
+            <div class="fig sm">45</div>
+            <div class="lbl">Specification documents</div>
+            <div class="sub">Model, views, validation, ML covariance</div>
+          </div>
+          <div class="card stat">
+            <div class="fig sm">3</div>
+            <div class="lbl">Loss functions evaluated</div>
+            <div class="sub">Frobenius, KL-divergence, spectral</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Status — stated precisely</h3>
+          <table class="compact" style="margin-top:8px;">
+            <tbody>
+              <tr><td class="lead" style="width:1.75in;">Specification</td>
+              <td><span class="pill built">Complete</span> 45 documents</td></tr>
+              <tr><td class="lead">Data contracts</td>
+              <td><span class="pill built">Complete</span> full input, view and result DTOs</td></tr>
+              <tr><td class="lead">Presentation layer</td>
+              <td><span class="pill progress">Shell</span> renders sample output</td></tr>
+              <tr><td class="lead">Solver &amp; ML estimator</td>
+              <td><span class="pill spec">Not built</span> the core Phase 1 deliverable</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <div class="ct">What this is, and is not</div>
+          <p>The design work is done and the contracts are settled; the computation is not written.
+          That is a well-scoped engineering task against a finished specification — which is a very
+          different risk from an unsolved research problem, and should be diligenced as such.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ ARCHITECTURE ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Platform Architecture</div>
+  <h1 class="title">Seven domains, one dependency rule</h1>
+  <p class="subtitle">Each domain owns its models, contracts and events. Dependencies point inward
+  toward pure domain logic — no domain reaches around another.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-4" style="gap:13px; margin-bottom:14px;">
+      <div class="domain-box">
+        <div class="dn">1 · Core Infrastructure</div>
+        <div class="dd">Consensus and finality, chain indexing, gas policy, rate limiting, fork and
+        upgrade management.</div>
+        <div class="dt">ConsensusManager · ChainIndexer · ForkManager</div>
+      </div>
+      <div class="domain-box">
+        <div class="dn">2 · Risk, Compliance &amp; Audit</div>
+        <div class="dd">Real-time and historical risk models, KYC/AML enforcement, tamper-proof
+        audit logging.</div>
+        <div class="dt">RiskModel · ComplianceManager · AuditLogger</div>
+      </div>
+      <div class="domain-box">
+        <div class="dn">3 · Asset, Trading &amp; Settlement</div>
+        <div class="dd">Portfolios, asset lifecycle, AMM liquidity, deterministic order matching and
+        atomic settlement.</div>
+        <div class="dt">Portfolio · OrderBook · SettlementController</div>
+      </div>
+      <div class="domain-box">
+        <div class="dn">4 · Integration &amp; Analytics</div>
+        <div class="dd">Cross-chain bridging, consensus price oracles, API perimeter, analytics
+        pipeline and data lake.</div>
+        <div class="dt">Bridge · PriceOracle · AnalyticsEngine</div>
+      </div>
+    </div>
+
+    <div class="cols-3" style="gap:13px; margin-bottom:16px;">
+      <div class="domain-box">
+        <div class="dn">5 · Governance, Ops &amp; Custody</div>
+        <div class="dd">On-chain proposals and voting, versioned parameter store, treasury,
+        insurance fund, time-locked upgrades, escrow and dispute resolution.</div>
+        <div class="dt">GovernanceController · ParameterStore · EscrowController</div>
+      </div>
+      <div class="domain-box">
+        <div class="dn">6 · AI / ML Governance</div>
+        <div class="dd">Model registry and versioning, shadow and canary deployment, continuous
+        fairness and drift monitoring, operator staking and slashing.</div>
+        <div class="dt">GlobalModelRegistry · ContinuousFairnessController</div>
+      </div>
+      <div class="domain-box">
+        <div class="dn">7 · Integration Gateway</div>
+        <div class="dd">API key lifecycle and rate limiting, protocol adapter and bot management,
+        integration orchestration, event and notification delivery.</div>
+        <div class="dt">APIGateway · AdapterManager · MessageBus</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="ct">Why this matters commercially</div>
+      <p>Modularity is the go-to-market. A counterparty can adopt the market-data and audit layer
+      without taking on trading or governance — and each domain can be security-reviewed and
+      certified on its own timeline rather than as one monolithic approval.</p>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ DELIVERY FOOTPRINT ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Delivery Footprint</div>
+  <h1 class="title">Eleven repositories, measured</h1>
+  <p class="subtitle">File counts taken directly from each repository's git index — not from
+  planning documents.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <table class="compact">
+      <thead>
+        <tr>
+          <th style="width:1.95in;">Repository</th>
+          <th style="width:3.45in;">Role</th>
+          <th style="width:2.75in;">Scale</th>
+          <th>Last push</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="lead">vv-landing</td>
+          <td>Dual-brand web platform — marketing, auth, dashboards, analytics, AI endpoints</td>
+          <td>933 TS/TSX · ~87k LOC · 93 pages · 44 API routes · 455 components</td>
+          <td>Jan 2026</td>
+        </tr>
+        <tr>
+          <td class="lead">vv</td>
+          <td>.NET 9 market-data core — domain, CQRS, Cosmos persistence, event publication</td>
+          <td>157 C# files · 12.1k LOC · 383 specification documents</td>
+          <td>May 2026</td>
+        </tr>
+        <tr>
+          <td class="lead">vv-game-suite</td>
+          <td>WebGL / Phaser framework — risk-liquidity puzzles and governance simulations</td>
+          <td>483 TS/TSX · 45 pages and routes</td>
+          <td>Jul 2025</td>
+        </tr>
+        <tr>
+          <td class="lead">vv-docs</td>
+          <td>Docusaurus documentation portal — API reference, tutorials, design guidelines</td>
+          <td>231 TS/TSX · 122 MD/MDX documents <span class="pill planned" style="margin-left:4px;">Archived</span></td>
+          <td>Feb 2026</td>
+        </tr>
+        <tr>
+          <td class="lead">vv-chain-services</td>
+          <td>Blockchain microservices — Ethereum, Tezos, Postgres, Fastify</td>
+          <td>90 files · 12 Python · 5 C# · 4 test files</td>
+          <td>Jun 2025</td>
+        </tr>
+        <tr>
+          <td class="lead">vv-iac</td>
+          <td>Azure infrastructure as code with what-if validation and gated promotion</td>
+          <td>42 Bicep templates · 64 files</td>
+          <td>May 2025</td>
+        </tr>
+        <tr>
+          <td class="lead">vv-chain</td>
+          <td>Cross-chain risk intelligence — on-chain contracts, TVL and protocol health</td>
+          <td>10 Solidity contracts</td>
+          <td>May 2025</td>
+        </tr>
+        <tr>
+          <td class="lead">vv-auth · vv-auth-frontend-demo</td>
+          <td>Authentication service and reference front end</td>
+          <td>109 TS/TSX across both</td>
+          <td>Jul 2025</td>
+        </tr>
+        <tr>
+          <td class="lead">cognitive-mesh-nexus</td>
+          <td>AI mesh integration, plus shared developer tooling in vv-dev-tools</td>
+          <td>60 TS/TSX · 32k of PowerShell tooling</td>
+          <td>Jul 2025</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ ECOSYSTEM ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Shared Infrastructure</div>
+  <h1 class="title">Four operating systems VeritasVault does not have to build</h1>
+  <p class="subtitle">Infrastructure already running across our wider portfolio and reusable
+  directly by VeritasVault — and, candidly, where most recent engineering activity has sat.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-4" style="gap:15px; margin-bottom:16px;">
+      <div class="card cyan">
+        <h3>Sluice</h3>
+        <p style="color:var(--dim); font-size:11.4px; margin-bottom:7px;">AI GATEWAY · PYTHON · LIVE</p>
+        <p>OpenAI-compatible gateway on Azure Container Apps with LiteLLM routing, model abstraction
+        and cost control. VeritasVault's five AI endpoints route through a governed layer instead of
+        binding to one vendor.</p>
+      </div>
+      <div class="card cyan">
+        <h3>Docket</h3>
+        <p style="color:var(--dim); font-size:11.4px; margin-bottom:7px;">AI COST OPS · LIVE</p>
+        <p>LLM spend tracking, usage analytics and cost optimisation. Makes the unit economics of
+        AI-assisted allocation measurable rather than assumed — a question every investor asks of an
+        AI-heavy product.</p>
+      </div>
+      <div class="card cyan">
+        <h3>Cognitive Mesh</h3>
+        <p style="color:var(--dim); font-size:11.4px; margin-bottom:7px;">AGENT PLATFORM · .NET · LIVE</p>
+        <p>Enterprise agent and LLM platform with RBAC, audit logging, Azure OpenAI and RAG. The
+        governance scaffolding VeritasVault's AI/ML domain specifies, already implemented in an
+        adjacent product.</p>
+      </div>
+      <div class="card cyan">
+        <h3>Baton</h3>
+        <p style="color:var(--dim); font-size:11.4px; margin-bottom:7px;">TASK GRAPH · TYPESCRIPT · LIVE</p>
+        <p>Shared human-and-agent task graph with a Kanban interface, MCP server and bidirectional
+        YAML sync. The coordination layer that makes a small team running many agents tractable.</p>
+      </div>
+    </div>
+
+    <div class="cols-2" style="gap:24px;">
+      <div class="callout">
+        <div class="ct">Why this matters to an investor</div>
+        <p>An AI-heavy financial product normally has to build model routing, cost control, agent
+        governance and audit from scratch — expensive, and squarely off the critical path. Here they
+        already exist, are running, and carry no additional build cost.</p>
+      </div>
+      <div class="note">
+        <div class="nt">The other reading — stated plainly</div>
+        <p>All four were pushed within the last week; VeritasVault's last substantial push was
+        January. That is the honest evidence on the focus question, and it is the right thing to
+        interrogate. The case for the raise is precisely that it buys concentrated attention on
+        VeritasVault.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ CURRENT STATE ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Current State</div>
+  <h1 class="title">What is built, what is specified, what is next</h1>
+  <p class="subtitle">An honest delineation across the whole estate.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <table class="compact">
+      <thead>
+        <tr>
+          <th style="width:2.35in;">Capability</th>
+          <th style="width:1.1in;">Status</th>
+          <th>Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="lead">Production deployment</td>
+          <td><span class="pill built">Live</span></td>
+          <td>Serving on Vercel at veritasvault.net — marketing, pricing, solutions, whitepaper and
+          demo routes publicly reachable; dashboards correctly behind authentication.</td>
+        </tr>
+        <tr>
+          <td class="lead">Dual-brand web application</td>
+          <td><span class="pill built">Built</span></td>
+          <td>93 pages across corporate and standard tiers, 455 components, unified header/footer,
+          theming, version selection and guided demo mode.</td>
+        </tr>
+        <tr>
+          <td class="lead">Dashboards &amp; analytics</td>
+          <td><span class="pill built">Built</span></td>
+          <td>36 dashboard views — portfolio, treasury, risk, voting, strategies, pools, performance,
+          on/off-chain — with Recharts visualisation and funnel reporting.</td>
+        </tr>
+        <tr>
+          <td class="lead">Auth, data &amp; API layer</td>
+          <td><span class="pill built">Built</span></td>
+          <td>44 API routes, NextAuth with GitHub and social login, Supabase Postgres with 14
+          sequential migrations plus seed data.</td>
+        </tr>
+        <tr>
+          <td class="lead">Market data core (.NET)</td>
+          <td><span class="pill built">Built</span></td>
+          <td>Six versioned entity types over <span class="mono">BaseMarketData</span>; Cosmos DB
+          repository partitioned on <span class="mono">/assetId</span> with optimistic concurrency;
+          MediatR CQRS; Event Grid and MassTransit publication.</td>
+        </tr>
+        <tr>
+          <td class="lead">External data integrations</td>
+          <td><span class="pill built">Built</span></td>
+          <td>DefiLlama TVL, Goldsky protocol indexing and CoinGecko market data, each with retry,
+          exponential backoff and explicit fallback handling.</td>
+        </tr>
+        <tr>
+          <td class="lead">Black-Litterman engine</td>
+          <td><span class="pill spec">Specified</span></td>
+          <td>45 documents and complete data contracts; the UI renders sample output. The solver
+          and ML covariance estimator are not implemented — this is the headline Phase 1 build.</td>
+        </tr>
+        <tr>
+          <td class="lead">AI features</td>
+          <td><span class="pill progress">Partial</span></td>
+          <td>Five endpoints live — pool analysis, strategy generation, risk assessment,
+          visualisation. Model governance (registry, fairness, drift) remains specified only.</td>
+        </tr>
+        <tr>
+          <td class="lead">Automated testing</td>
+          <td><span class="pill progress">Weak</span></td>
+          <td>Backend at 11.5% line coverage across 15 test files; the web platform has
+          <strong style="color:var(--amber);">no test files at all</strong>. The single largest
+          engineering gap.</td>
+        </tr>
+        <tr>
+          <td class="lead">Risk engine, governance, bridging</td>
+          <td><span class="pill spec">Specified</span></td>
+          <td>Contract, event and security specification across 383 documents; UI surfaces exist,
+          but the enforcing backend domains are not yet implemented.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ TECHNOLOGY ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Technology</div>
+  <h1 class="title">A conservative stack for a conservative buyer</h1>
+  <p class="subtitle">Institutional buyers reward boring, supportable technology choices. The stack
+  is deliberately mainstream, managed and auditable.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-2" style="gap:26px;">
+      <div>
+        <div class="arch-layer">
+          <div class="lname">Web platform</div>
+          <div class="arch-chips">
+            <span class="chip on">Next.js 15.3</span>
+            <span class="chip on">React 19</span>
+            <span class="chip on">TypeScript 5.8</span>
+            <span class="chip on">Tailwind</span>
+            <span class="chip on">Radix UI</span>
+            <span class="chip on">Recharts</span>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="lname">Identity &amp; data</div>
+          <div class="arch-chips">
+            <span class="chip on">NextAuth</span>
+            <span class="chip on">Supabase</span>
+            <span class="chip on">PostgreSQL</span>
+            <span class="chip on">Zod</span>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="lname">Backend services</div>
+          <div class="arch-chips">
+            <span class="chip on">.NET 9</span>
+            <span class="chip on">ASP.NET Core</span>
+            <span class="chip on">MediatR / CQRS</span>
+            <span class="chip on">Azure Functions</span>
+            <span class="chip on">Fastify</span>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <div class="lname">Infrastructure &amp; chain</div>
+          <div class="arch-chips">
+            <span class="chip on">Cosmos DB</span>
+            <span class="chip on">Event Grid</span>
+            <span class="chip on">MassTransit</span>
+            <span class="chip on">Bicep</span>
+            <span class="chip on">Solidity</span>
+            <span class="chip on">Tezos</span>
+            <span class="chip">Data Lake</span>
+          </div>
+        </div>
+        <p style="font-size:10.6px; color:var(--dim); margin-top:9px;">
+          Solid chips are implemented today; outlined chips are specified and planned.</p>
+      </div>
+
+      <div class="stack">
+        <div class="card cyan">
+          <h3>Deliberately mainstream</h3>
+          <p>No bespoke consensus client, no exotic runtime, no dependency on a single chain's
+          tooling. This materially reduces both audit surface and the difficulty of hiring engineers
+          who can maintain it.</p>
+        </div>
+        <div class="card cyan">
+          <h3>Data design</h3>
+          <p>Composite document identity encodes data type, asset class, asset, region, date,
+          document type, schema version and entity version. A record is self-describing and
+          independently verifiable without reference to external state.</p>
+        </div>
+        <div class="card cyan">
+          <h3>Engineering discipline</h3>
+          <p>Specification-first development with contract documents preceding implementation;
+          conventional commits, pre-commit hooks, CI workflows, duplication detection and coverage
+          reporting wired into the repositories.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ DIFFERENTIATION ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Differentiation</div>
+  <h1 class="title">Where the defensibility actually sits</h1>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-2" style="gap:26px;">
+      <div class="stack">
+        <div class="card accent">
+          <h3>1 · The allocation engine</h3>
+          <p>Black-Litterman with ML-enhanced covariance estimation and view-level attribution —
+          the language institutional allocators already speak, specified across 45 documents with
+          contracts settled. This is the wedge, not the architecture.</p>
+        </div>
+        <div class="card accent">
+          <h3>2 · Compliance as architecture</h3>
+          <p>Most entrants treat regulation as a feature request. Here, policy enforcement points,
+          audit emission and jurisdictional pluggability are structural — which is precisely what
+          shortens an institutional procurement cycle.</p>
+        </div>
+        <div class="card accent">
+          <h3>3 · Governed AI/ML, not bolted-on AI</h3>
+          <p>AI endpoints are live, and the governance layer around them — registry, shadow and
+          canary deployment, fairness and drift monitoring, operator staking — is fully specified.
+          As model-governance regulation tightens, this becomes an entry requirement.</p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <h3>Adjacent approaches and their limits</h3>
+          <table style="margin-top:10px;">
+            <thead>
+              <tr><th style="width:1.5in;">Approach</th><th>Structural limitation</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="lead">Retail DeFi protocols</td>
+              <td>No audit trail designed as evidence; compliance bolted on post-hoc.</td></tr>
+              <tr><td class="lead">Traditional data vendors</td>
+              <td>Strong provenance, but no on-chain settlement or programmable policy enforcement.</td></tr>
+              <tr><td class="lead">Custody-only providers</td>
+              <td>Solve asset safety, not valuation defensibility or risk-policy enforcement.</td></tr>
+              <tr><td class="lead">In-house institutional builds</td>
+              <td>Expensive, slow, and rebuilt independently at every institution.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <div class="nt">Competitive landscape</div>
+          <p>Named competitor benchmarking and pricing comparison are provided on request as part of
+          diligence. With no customers yet, we have no win/loss evidence — and would rather say so
+          than present the category analysis above as though it were proven in the field.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Roadmap</div>
+  <h1 class="title">Phased delivery, gated on evidence</h1>
+  <p class="subtitle">Each phase ends at a demonstrable gate rather than a date — security review,
+  audit logging and integration proof are release criteria, not follow-up work.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="tight">
+      <div class="phase">
+        <div class="pn">Phase 1<small>In progress</small></div>
+        <div class="pb">
+          <h4>Harden what exists</h4>
+          <p>Test coverage across the web platform and the .NET core, wiring the dashboards to the
+          market-data backend rather than fallback data, and hardening the existing 44 API routes.
+          This converts a demonstrable product into a sellable one.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="pn">Phase 2<small>Next</small></div>
+        <div class="pb">
+          <h4>Live data, risk enforcement and gateway</h4>
+          <p>Low-latency live-value container, price oracle consensus and anomaly detection,
+          baseline risk model and compliance enforcement behind the existing risk-assessment UI, and
+          the API gateway with key lifecycle and rate limiting.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="pn">Phase 3<small>Planned</small></div>
+        <div class="pb">
+          <h4>Archival, analytics and asset lifecycle</h4>
+          <p>Data Lake cold-storage tiering with backfill, analytics for operational and compliance
+          reporting, and auditable trade handling behind the portfolio surfaces.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="pn">Phase 4<small>Specified</small></div>
+        <div class="pb">
+          <h4>Governance, custody and AI/ML governance</h4>
+          <p>On-chain voting behind the existing UI, versioned parameter store, treasury and
+          insurance fund, time-locked upgrades, and the governed model registry.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:12px;">
+      <div class="ct">Go-to-market sequencing · and schedule candour</div>
+      <p>Private investors first, institutions second. A small private-client cohort validates the
+      allocation engine, generates reference customers and produces revenue against a far shorter
+      sales cycle — while the compliance surfaces an institutional buyer requires are completed. The
+      corporate tier is the larger prize, not the first move.</p>
+      <p style="margin-top:9px; color:var(--muted); font-size:12.2px;">The original Phase 1 plan
+      targeted an MVP gate in mid-2025; that date was missed, and the last substantial web push was
+      January 2026. Dates are omitted until resourcing is settled — delivery velocity, not
+      architecture quality, is the primary diligence question.</p>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ OPPORTUNITY ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Opportunity</div>
+  <h1 class="title">Where the platform can expand</h1>
+  <p class="subtitle">Eight expansion vectors identified in the platform's strategic assessment,
+  ordered by proximity to what is already built.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-4" style="gap:14px; margin-bottom:14px;">
+      <div class="card cyan">
+        <h3>Institutional onboarding</h3>
+        <p>Enterprise custody, multi-signature governance and compliance reporting open access to
+        institutional capital and liquidity.</p>
+      </div>
+      <div class="card cyan">
+        <h3>Regulatory adoption</h3>
+        <p>Compliance-by-design becomes a competitive advantage precisely as regulated markets
+        formalise digital-asset rules.</p>
+      </div>
+      <div class="card cyan">
+        <h3>Audit &amp; proofs as a service</h3>
+        <p>Exportable, cryptographically verifiable audit data is a standalone revenue line
+        independent of trading volume.</p>
+      </div>
+      <div class="card cyan">
+        <h3>AI/ML and DeFi fusion</h3>
+        <p>Governed models applied to portfolio optimisation, anomaly detection and bridge security
+        — auditable by construction.</p>
+      </div>
+    </div>
+
+    <div class="cols-4" style="gap:14px; margin-bottom:16px;">
+      <div class="card">
+        <h3>Cross-chain growth</h3>
+        <p>Chain adapters and bridging extend reach beyond a single ecosystem and reduce dependence
+        on any one chain's economics.</p>
+      </div>
+      <div class="card">
+        <h3>Composable ecosystem</h3>
+        <p>Standardised interfaces allow third-party strategy plugins, protocol adapters and model
+        components — network effects without core headcount.</p>
+      </div>
+      <div class="card">
+        <h3>Pluggable policy modules</h3>
+        <p>Jurisdiction-specific compliance and risk models let one codebase serve materially
+        different regulatory regimes.</p>
+      </div>
+      <div class="card">
+        <h3>Automated incident response</h3>
+        <p>Coordinated circuit breakers and self-healing reduce operational risk — a direct
+        procurement argument for regulated buyers.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <div class="nt">On sizing</div>
+      <p>This slide describes the direction of expansion, not a sized market. Addressable market,
+      segment prioritisation and revenue modelling are worked through directly rather than presented
+      as a headline number we would then have to defend.</p>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ RISKS ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Risk Register</div>
+  <h1 class="title">Known risks and how they are addressed</h1>
+  <p class="subtitle">Drawn from the platform's own strategic assessment and from direct inspection
+  of the codebase.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <table class="compact">
+      <thead>
+        <tr>
+          <th style="width:1.85in;">Risk</th>
+          <th style="width:4.2in;">Exposure</th>
+          <th>Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="lead">Test coverage</td>
+          <td>The web platform has no automated tests; the backend sits at 11.5% line coverage.</td>
+          <td>Coverage is the Phase 1 exit gate, starting with API routes and the risk surfaces.</td>
+        </tr>
+        <tr>
+          <td class="lead">Focus &amp; continuity</td>
+          <td>Last substantial VeritasVault push was January 2026, while four sister projects were
+          updated this week.</td>
+          <td>The raise buys concentrated attention; sister infrastructure is reused, not rebuilt.</td>
+        </tr>
+        <tr>
+          <td class="lead">Front-end / back-end integration</td>
+          <td>Dashboards partly run on fallback and demo data rather than the .NET market-data core.</td>
+          <td>Wire the existing UI to live services as the first Phase 1 deliverable.</td>
+        </tr>
+        <tr>
+          <td class="lead">Estate fragmentation</td>
+          <td>Eleven repositories with divergent activity raise coordination and drift cost.</td>
+          <td>Consolidate or archive dormant repos; one release process across the active core.</td>
+        </tr>
+        <tr>
+          <td class="lead">Execution &amp; scope</td>
+          <td>Seven-domain ambition against a small team; Phase 1 slipped against plan.</td>
+          <td>Strict phase gating; treat scope reduction as the default lever.</td>
+        </tr>
+        <tr>
+          <td class="lead">Regulatory uncertainty</td>
+          <td>Rules across jurisdictions are unsettled and may force compliance redesign.</td>
+          <td>Pluggable jurisdiction-specific policy modules; standing regulatory monitoring.</td>
+        </tr>
+        <tr>
+          <td class="lead">Bridge &amp; adapter exploits</td>
+          <td>Cross-chain components are the sector's highest-value attack surface.</td>
+          <td>Additional review, dedicated monitoring, circuit breakers, staged rollout.</td>
+        </tr>
+        <tr>
+          <td class="lead">Key-person concentration</td>
+          <td>Engineering depth currently rests with a single technical founder.</td>
+          <td>Specification-first practice keeps the system legible to incoming engineers; first
+          hires are the priority on close.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ USE OF CAPITAL ============ -->
+<section class="slide s">
+  <div class="eyebrow num">Use of Capital</div>
+  <h1 class="title">What funding would buy</h1>
+  <p class="subtitle">The estate is unusually complete for its stage. Capital converts it from
+  demonstrable to sellable.</p>
+  <div class="rule"></div>
+
+  <div class="body-area">
+    <div class="cols-2" style="gap:24px;">
+      <div class="stack snug">
+        <div class="card accent">
+          <h3>Harden and connect</h3>
+          <p>Bring the web platform under test, wire the 36 dashboard views to the .NET market-data
+          core instead of fallback data, and harden the existing API surface. Highest-value use of
+          the first tranche by a wide margin.</p>
+        </div>
+        <div class="card accent">
+          <h3>Security control harmonisation</h3>
+          <p>Audit and consolidate overlapping controls across domains into a unified policy
+          framework with clear boundaries and ownership.</p>
+        </div>
+        <div class="card accent">
+          <h3>Regulatory readiness programme</h3>
+          <p>Jurisdiction-specific compliance packages, regulatory monitoring capability, and early
+          relationships with regulators in target markets.</p>
+        </div>
+        <div class="card accent">
+          <h3>Institutional onboarding</h3>
+          <p>Enterprise documentation, reporting tooling and a streamlined onboarding path — the
+          work that converts architectural credibility into signed counterparties.</p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <h3>Also funded</h3>
+          <ul class="ticks cyan tight" style="margin-top:6px;">
+            <li><strong>Cross-domain monitoring</strong> — unified health checks, watchdogs and
+            incident procedures spanning domain boundaries</li>
+            <li><strong>Operational excellence</strong> — attack simulations, automated cross-domain
+            testing, runbooks for every critical process</li>
+            <li><strong>Ecosystem development</strong> — SDKs, developer documentation and a
+            security review process for third-party contributions</li>
+            <li><strong>Cross-chain security</strong> — hardened treatment of adapters, oracles and
+            bridges as the highest-risk surfaces</li>
+            <li><strong>Estate consolidation</strong> — archive dormant repositories, unify release
+            and CI across the active core</li>
+          </ul>
+        </div>
+        <div class="note">
+          <div class="nt">Terms</div>
+          <p><strong style="color:var(--text);">Amount · Instrument · Valuation · Runway ·
+          Milestone and hiring plan</strong><br><br>
+          Discussed directly rather than published in a document that will be forwarded. The
+          priorities above are the substance of the request; the structure around them is a
+          conversation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mark">VeritasVault Platform</div>
+  <div class="slide-num"></div>
+</section>
+
+<!-- ============ CLOSE ============ -->
+<section class="slide cover s" style="justify-content:center;">
+  <div class="cover-grid"></div>
+  <div class="cover-inner">
+    <div class="eyebrow num">In Summary</div>
+    <h1 class="title" style="font-size:40px; max-width:8.7in; margin-bottom:20px;">
+      The hard part of institutional DeFi is the evidence layer.<br>
+      <span style="color:var(--gold-lt);">VeritasVault has designed it — and built on it.</span>
+    </h1>
+    <div class="cover-rule" style="margin:0 0 26px;"></div>
+
+    <div class="cols-3" style="max-width:10.6in; gap:22px;">
+      <div class="card accent" style="background:rgba(18,37,63,0.75);">
+        <h3>Built</h3>
+        <p>A dual-brand Next.js platform with 36 dashboard views and 44 API routes, on a .NET 9
+        market-data core with versioned entities and event publication.</p>
+      </div>
+      <div class="card accent" style="background:rgba(18,37,63,0.75);">
+        <h3>Designed</h3>
+        <p>383 specification documents across seven domains — contracts, events, security threat
+        models and implementation guidance.</p>
+      </div>
+      <div class="card accent" style="background:rgba(18,37,63,0.75);">
+        <h3>Needed</h3>
+        <p>Capital and engineering capacity to test, connect and harden what already exists — then
+        to open the specified domains in sequence.</p>
+      </div>
+    </div>
+
+    <div class="cover-meta" style="margin-top:38px;">
+      <div><span class="k">Contact</span><span class="v">Jurie Smit</span></div>
+      <div><span class="k">Email</span><span class="v">smit.jurie@gmail.com</span></div>
+      <div><span class="k">Platform</span><span class="v">veritasvault.net</span></div>
+      <div><span class="k">Document</span><span class="v">Confidential · August 2026</span></div>
+    </div>
+  </div>
+  <div class="footer-mark">VeritasVault Platform</div>
+</section>
+
+</body>
+</html>
