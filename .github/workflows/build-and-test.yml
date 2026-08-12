@@ -7,6 +7,14 @@ on:
     branches: [main, master, develop]
   workflow_dispatch:
 
+# The repository moved into the neuralliquid org, where the default
+# GITHUB_TOKEN permission is read-only. The coverage-comment step needs
+# pull-requests: write, so grant it explicitly here rather than relying on
+# an org-wide default.
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build:
     name: Build and Test
