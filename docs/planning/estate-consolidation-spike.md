@@ -1,3 +1,17 @@
+---
+document_type: architecture
+classification: internal
+status: draft
+version: 0.1.0
+last_updated: '2026-08-12'
+applies_to:
+- Core
+reviewers:
+- '@tech-lead'
+priority: p2
+next_review: '2026-11-12'
+---
+
 # VeritasVault Estate Consolidation — Planning Spike
 
 **Date:** 2026-08-12

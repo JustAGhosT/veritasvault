@@ -1,3 +1,17 @@
+---
+document_type: overview
+classification: internal
+status: draft
+version: 0.1.0
+last_updated: '2026-08-11'
+applies_to:
+- Core
+reviewers:
+- '@tech-lead'
+priority: p2
+next_review: '2026-11-12'
+---
+
 # Regulatory Scoping Spike — Target Jurisdictions and Compliance Requirements
 
 **Status:** Research spike · Draft v0.1
