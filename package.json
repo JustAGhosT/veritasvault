@@ -1,11 +1,11 @@
 {
-  "name": "phoenix-market-data",
+  "name": "veritasvault",
   "version": "1.0.0",
-  "description": "Phoenix MarketData Platform for financial market data processing and analysis",
+  "description": "VeritasVault platform — institutional DeFi analytics, market-data core, infrastructure and on-chain contracts",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/phoenixvc/phoenix-market-data.git"
+    "url": "https://github.com/JustAGhosT/vv.git"
   },
   "license": "UNLICENSED",
   "scripts": {

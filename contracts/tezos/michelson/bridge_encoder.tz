@@ -1,0 +1,25 @@
+parameter (or (or (pair %pack (address %source) (address %destination) (nat %amount))
+                  (pair %unpack (address %source) (address %destination) (nat %amount)))
+              (or (pair %encode (address %source) (address %destination) (nat %amount))
+                  (pair %decode (address %source) (address %destination) (nat %amount))));
+storage unit;
+code { UNPAIR;
+       IF_LEFT
+         { IF_LEFT
+             { # pack
+               UNPAIR; UNPAIR; UNPAIR;
+               PACK;
+               NIL operation; PAIR }
+             { # unpack
+               UNPAIR; UNPAIR; UNPAIR;
+               UNPACK (pair address address nat);
+               IF_NONE { FAILWITH } { NIL operation; PAIR } } }
+         { IF_LEFT
+             { # encode
+               UNPAIR; UNPAIR; UNPAIR;
+               PACK;
+               NIL operation; PAIR }
+             { # decode
+               UNPAIR; UNPAIR; UNPAIR;
+               UNPACK (pair address address nat);
+               IF_NONE { FAILWITH } { NIL operation; PAIR } } } }
