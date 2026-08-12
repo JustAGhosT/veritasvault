@@ -41,6 +41,14 @@ document should be read.
    an actively-modified file from a different branch would race that session's work. ADR-0003
    and ADR-0004 were read by targeted search rather than in full; §8 and §9.3 depend on them,
    so both should be re-checked against their final text.
+
+   **Required merge order.** This ADR may land before those files — its content stands on its
+   own — but the link stack is only whole once they do. The follow-up is therefore explicit:
+   whoever lands ADR-0001–0004, the plan and `docs/specs/` should, in that same PR, confirm
+   the five relative links from this file resolve (`./0001-…` through `./0004-…` and
+   `../black-litterman-implementation-plan.md`) and apply or reject the §9 amendments. Until
+   then this ADR's links are known-broken by design rather than by oversight, and a link
+   checker run over `docs/adr/` will flag them.
 2. **Nothing in the Black-Litterman engine is implemented.** There is no `crates/` directory,
    no `Cargo.toml` anywhere in the repository, and no solver. The only Black-Litterman code
    that exists is `src/vv.Application/DTOs/Portfolio/BlackLittermanModels.cs`. This spike
@@ -372,19 +380,38 @@ when safetensors stores raw little-endian bytes.
 
 Python-side export, after training in TensorFlow or PyTorch:
 
-1. **Fold batch normalization into the preceding Dense layer.** Where BN follows Dense,
-   `W' = W · γ/√(σ²+ε)` and `b' = (b − μ)·γ/√(σ²+ε) + β`. This removes BN from inference
-   entirely. Note the ambiguity from §1.1: the fold is valid only for the Dense → BN ordering
-   that both code samples use. If the resolution of §1.1 puts BN post-activation as
-   `network.md`'s prose says, or first as `bl-ai-shrinkage-model.md` shows, it survives as a
-   standalone diagonal affine op — trivial either way, but it must be recorded which layers
-   were folded and which were not. Fold once, in f64, in Python.
+1. **Fold batch normalization into the preceding Dense layer.** Where BN follows Dense, with
+   `s = γ/√(σ²+ε)`:
+
+   ```text
+   W' = scale each OUTPUT unit's weights by s      b' = (b − μ)·s + β
+   ```
+
+   **The axis matters and the two frameworks disagree on it.** `s` has length `out`, so it must
+   multiply the output axis. A bare `W * s` broadcasts along the *last* axis, which is correct
+   for one layout and silently wrong for the other:
+
+   | Framework | Weight layout | Correct fold | Bare `W * s` |
+   |---|---|---|---|
+   | PyTorch `nn.Linear` | `[out, in]` | `W * s[:, None]`, i.e. `diag(s) · W` | **wrong** — scales input columns |
+   | TensorFlow `Dense` | `[in, out]` | `W * s[None, :]` | correct by luck |
+
+   Getting this wrong does not raise: for PyTorch it either mismatches shape (when
+   `in ≠ out`) or, when the layer happens to be square, produces a plausible model that is
+   simply incorrect at every layer. Assert `W'.shape == W.shape` and verify the fold against
+   an unfolded forward pass on random input before writing the artifact.
+
+   Note the ambiguity from §1.1: the fold is valid only for the Dense → BN ordering that both
+   code samples use. If the resolution of §1.1 puts BN post-activation as `network.md`'s prose
+   says, or first as `bl-ai-shrinkage-model.md` shows, it survives as a standalone diagonal
+   affine op — trivial either way, but it must be recorded which layers were folded and which
+   were not. Fold once, in f64, in Python.
 2. **Cast every tensor to f64** and write `.safetensors`.
 3. **Emit the manifest**, including a sha256 per member file.
 
 Layout — one file per ensemble member plus a manifest:
 
-```
+```text
 ml-shrinkage-v1.2.0/
   manifest.json
   member-00.safetensors      # dense_0.w [128,F], dense_0.b [128], … head_identity.w …
@@ -407,8 +434,12 @@ The manifest carries what the Rust side must **verify**, not merely what it must
   "targets": ["identity", "constant_correlation", "single_factor"],
   "activation": "elu",
   "batchnorm_folded": true,
+  "weight_layout": "out_in",
   "aggregation": "simple_mean",
-  "uncertainty": "ensemble_variance",
+  "uncertainty": {
+    "aleatoric": "variance_head",
+    "epistemic": "ensemble_disagreement"
+  },
   "members": [
     { "file": "member-00.safetensors", "sha256": "…" },
     { "file": "member-01.safetensors", "sha256": "…" }
@@ -416,7 +447,8 @@ The manifest carries what the Rust side must **verify**, not merely what it must
   "layers": [
     { "name": "dense_0",        "kind": "dense",       "in": 41, "out": 128, "act": "elu" },
     { "name": "resblock_0",     "kind": "residual",    "width": 64, "act": "elu" },
-    { "name": "head_identity",  "kind": "dense_stack", "dims": [32, 16, 1], "act": "elu", "out_act": "sigmoid" }
+    { "name": "head_identity",  "kind": "dense_stack", "dims": [32, 16, 1], "act": "elu", "out_act": "sigmoid" },
+    { "name": "head_variance",  "kind": "dense_stack", "dims": [32, 1], "act": "elu", "out_act": "softplus" }
   ]
 }
 ```
@@ -424,7 +456,20 @@ The manifest carries what the Rust side must **verify**, not merely what it must
 `feature_names` is load-bearing rather than documentary: it is the defence against the silent
 permutation failure identified in §1.4. `nan_policy` and the scaler vectors are exported
 rather than reimplemented so that the normalisation constants cannot drift apart from the
-weights they were fitted with.
+weights they were fitted with. `weight_layout` is recorded so the Rust loader can assert the
+orientation the fold assumed, rather than inferring it from tensor shapes — which is ambiguous
+whenever a layer is square.
+
+**The two uncertainty sources are distinct and both must be represented.** §1.3 selects deep
+ensembles *plus* a variance head, and those are not the same quantity: the variance head is a
+trained per-member output estimating **aleatoric** (irreducible, data) uncertainty, while
+disagreement across members estimates **epistemic** (model) uncertainty. They have different
+training objectives — the head needs a heteroscedastic loss, the ensemble needs none — and
+different tensors. Conflating them under a single `ensemble_variance` field, as an earlier
+draft of this manifest did, would silently drop whichever one the implementer did not build.
+Hence `uncertainty` is an object naming both, `head_variance` appears in `layers`, and
+`ShrinkagePrediction` (§4.2) returns both separately. If the resolution of §1.3 drops the
+variance head, set `"aleatoric": null` explicitly rather than omitting the key.
 
 ### 4.2 Rust side
 
@@ -468,27 +513,87 @@ fn sigmoid(x: f64) -> f64 {
     if x >= 0.0 { 1.0 / (1.0 + libm::exp(-x)) }
     else        { let e = libm::exp(x); e / (1.0 + e) }
 }
+
+/// Max-subtracted, fixed-order. Both properties are load-bearing:
+/// max-subtraction bounds every exp() argument to (-inf, 0] so no term overflows,
+/// and the two passes iterate in index order so the summation order is fixed
+/// per rule 7. Never `iter().sum()` after a reorder, and never rayon.
+fn softmax(logits: &[f64], out: &mut [f64]) {
+    let m = logits.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+    let mut denom = 0.0;
+    for (o, &l) in out.iter_mut().zip(logits) {   // pass 1: index order
+        *o = libm::exp(l - m);
+        denom += *o;                              // accumulate in the same order
+    }
+    for o in out.iter_mut() { *o /= denom; }      // pass 2: index order
+}
 ```
 
-`FeatureVector` is constructible **only** through a builder that takes the manifest's
-`feature_names` and fills slots by name, returning `Err(ModelError::FeatureMismatch)` on any
-missing feature, unexpected feature, or order disagreement. A change to the feature pipeline
-then fails loudly at load time instead of silently at inference time — the §1.4 failure mode.
+**Non-finite handling, stated precisely because the two contracts are easy to conflate.**
+The manifest's `nan_policy` applies **only to input features** — it is the exported form of
+the training pipeline's `nan_to_num(nan=0.0, posinf=3.0, neginf=-3.0)`, and the Rust side must
+apply it identically so a NaN feature maps to the same value it did during training. It is
+*not* a licence for non-finite intermediates or outputs. Any non-finite value appearing after
+feature normalisation — in a pre-activation, a softmax logit, or a predicted intensity — is a
+defect, not a data condition, and must surface as a typed error rather than be repaired.
+That keeps [ADR-0001 §D6](./0001-black-litterman-model-conventions.md#d6--numerical-policy)'s
+"no NaN, no Inf crosses the boundary" rule intact without contradicting `nan_policy`.
 
-`ShrinkagePrediction` returns the per-target intensities, the ensemble variance, and the
-model artifact hash, so the caller can put the hash into the signed envelope per rule 9.
+**`FeatureVector` construction.** Constructible **only** through a builder that takes the
+manifest's `feature_names` and fills slots by name. The contract is exact **name-set
+equality** — `Err(ModelError::FeatureMismatch)` naming the offending features on any missing
+or unexpected name — plus **canonical ordering**: filling by name *is* what imposes manifest
+order, so the caller's map order is irrelevant and there is no separate "order disagreement"
+to detect. An earlier draft claimed both, which was incoherent.
+
+Timing: this check runs at `FeatureVector` construction, immediately before `predict`, not at
+`load` — `load` sees the manifest and weights but no features, so it cannot check this. If a
+process wants to fail at startup rather than on the first solve, it should call a
+`Manifest::assert_features(&[&str])` against the feature pipeline's declared output names once
+during initialisation; that is an additional guard, not a replacement.
+
+`ShrinkagePrediction` returns the per-target intensities, **both uncertainty components
+separately** (aleatoric from the variance head, epistemic from ensemble disagreement — see
+§4.1), and the model artifact hash, so the caller can put the hash into the signed envelope
+per rule 9.
 
 ### 4.3 The test that makes this credible
 
 The Python exporter also writes N input/output fixture pairs in f64. A `cargo test` asserts
-the Rust forward pass reproduces them to **bit equality** — not to a tolerance.
+the Rust forward pass reproduces them.
 
-This matters more than it sounds. A tolerance-based parity test passes while hiding exactly
-the class of discrepancy this ADR exists to prevent: a mis-transcribed fold, a transposed
-weight matrix that happens to be near-square, an activation applied in the wrong order. If
-bit equality cannot be achieved, that is a real defect in the port, and a tolerance would
-convert a findable bug into a permanent unexplained difference between the model that was
-validated and the model that is signed.
+**But bit equality against TensorFlow or PyTorch output is not an achievable requirement, and
+demanding it would be this ADR contradicting itself.** §3 spends its length establishing that
+reduction order and transcendental implementations differ between implementations. TensorFlow
+and PyTorch are *different implementations*: they pick their own matmul kernels, thread counts
+and `exp` approximations, none of which match a fixed-order `libm` pass. A perfectly correct
+port would therefore fail a bit-equality assertion against framework output, and the required
+test would block Phase 9 permanently. An earlier draft of this section asked for exactly that;
+it was wrong.
+
+The requirement splits in two, because two different things are being checked:
+
+| Test | Producer vs consumer | Assertion | Why |
+|---|---|---|---|
+| **Framework parity** | TF/PyTorch → Rust | tolerance, `≤ 1e-12` relative on every output | Different implementations; catches transcription defects, not last bits |
+| **Reference parity** | scalar fixed-order NumPy → Rust | **bit equality** | Same op order, same math; any difference is a real defect |
+| **Cross-RID determinism** | Rust → Rust, three RIDs | **bit equality** of the canonicalised hash | The signing requirement (rule 8) |
+
+Only the third is what `BlackLitterman-Reference.md:23` actually demands: reproducibility of
+*our* engine across platforms, not agreement with Python to the last bit.
+
+The middle row is the one worth building deliberately. A **scalar, fixed-order NumPy reference
+evaluator** — no BLAS calls, loops in the same index order as the Rust, `exp` from the same
+algorithm — can be held to bit equality, and it is the test that catches a mis-transcribed
+fold axis (§4.1) or a transposed weight matrix. Whether NumPy's `exp` can be made to agree
+with `libm`'s bit-for-bit is itself uncertain and should be settled by experiment early; if it
+cannot, hold this row to `≤ 4 ULP` and rely on cross-RID hashing for the exactness guarantee.
+Do not discover this during Phase 9 implementation.
+
+For the tolerance row, the producer envelope must be pinned or the tolerance is meaningless:
+record framework and version, dtype (**f64**, not the default f32), thread count (1),
+and any deterministic-ops flag, in the fixture header alongside the provenance the plan's T2
+rules already require.
 
 Adding to the plan's T5 tier: a cross-RID hash equality test for the estimator (rule 8), and
 a negative test that a manifest with permuted `feature_names` is rejected rather than
