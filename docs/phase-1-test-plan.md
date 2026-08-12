@@ -134,8 +134,12 @@ separate task, and doing so will surface two previously-unrun tests that may not
 ### Re-baselined figures — measured
 
 Run [31549457020](https://github.com/neuralliquid/veritasvault/actions/runs/31549457020), first green
-build with corrected collection. 69 tests across two projects (64 Infrastructure, 5 Api); 62 passed,
-7 skipped.
+build with corrected collection. 69 tests across two projects; **62 pass, 7 are skipped**:
+
+| Project                  | Total | Passed | Skipped |
+| ------------------------ | ----- | ------ | ------- |
+| `vv.Infrastructure.Tests` | 64    | 62     | 2       |
+| `vv.Api.Tests`            | 5     | **0**  | **5**   |
 
 | Package             | Line               | Branch           |
 | ------------------- | ------------------ | ---------------- |
@@ -154,13 +158,18 @@ the two. `docs/README.md` should be corrected.
 Two results confirm findings above and are worth acting on:
 
 - **`vv.Application` at 0%** is the missing `.csproj` — those tests genuinely never run.
-- **`vv.Api` at 0% despite its 5 tests passing.** The assembly is now instrumented and appears in
-  the report, but nothing covers it, so `MarketDataControllerTests` exercises no `vv.Api` code.
-  A passing test suite that covers none of its target is worth a look before it is counted as
-  evidence of anything.
-- **7 skipped tests**, including `QueryOperationTests.QueryAsync_ShouldReturnFilteredResults` and
-  `QueryWithPaginationAsync_ShouldHandleMultiplePages` — query behaviour is priority 2 in §5, and
-  its existing tests are switched off.
+- **`vv.Api` at 0% because every one of its 5 tests is skipped.** All five
+  `MarketDataControllerTests` cases carry `[SKIP]` — `Passed: 0, Skipped: 5`. The assembly is now
+  instrumented and appears in the report, but nothing ever executes against it. `vv.Api.Tests`
+  contributes no evidence about `vv.Api` whatsoever.
+- **2 further skipped tests in `vv.Infrastructure.Tests`** —
+  `QueryOperationTests.QueryAsync_ShouldReturnFilteredResults` and
+  `QueryWithPaginationAsync_ShouldHandleMultiplePages`. Query behaviour is priority 2 in §5, and its
+  only existing tests are switched off.
+
+Taken together: of the three test projects, one has no project file, one is entirely skipped, and
+the third has its highest-risk area disabled. The 20% figure comes almost entirely from
+`vv.Infrastructure.Tests`' 62 live tests.
 
 Proposed .NET Phase 1 gate, against the measured baseline above:
 
