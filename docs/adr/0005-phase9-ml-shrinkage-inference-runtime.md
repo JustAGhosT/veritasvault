@@ -35,7 +35,7 @@ document should be read.
 
 Scope: this ADR decides how a *trained* ML shrinkage model is evaluated at inference time
 inside the Rust numeric core. It does not decide training, and it does not authorise Phase 9
-to begin — see [Blocking prerequisites](#blocking-prerequisites-surfaced-by-this-spike).
+to begin — see [Blocking prerequisites](#6-blocking-prerequisites-surfaced-by-this-spike).
 
 ## 1. Architecture summary: confirmed in outline, materially understated in detail
 
