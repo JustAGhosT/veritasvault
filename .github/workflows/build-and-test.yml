@@ -7,6 +7,17 @@ on:
     branches: [main, master, develop]
   workflow_dispatch:
 
+# Declared explicitly rather than inherited. The workflow previously relied on
+# the repo's default GITHUB_TOKEN scopes and started failing with "Resource not
+# accessible by integration" when those tightened — an unrelated settings change
+# breaking the build is exactly what an explicit block prevents.
+# Note: this can only narrow what the repo/org already allows. If the org
+# enforces a read-only token, `pull-requests: write` here has no effect and the
+# setting must be changed at Settings > Actions > General > Workflow permissions.
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build:
     name: Build and Test
@@ -14,11 +25,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Sonar needs full history to attribute "new code" to the right commits.
+          # A shallow clone silently degrades new-code detection, which is what the
+          # diff-coverage gate is measured against.
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
+
+      # SonarScanner for .NET runs on the JVM.
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
 
       - name: Cache NuGet packages
         uses: actions/cache@v4
@@ -28,14 +51,80 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      # Sonar analysis is skipped entirely when SONAR_TOKEN is absent, so this
+      # workflow stays green on forks and before the secret is provisioned.
+      # It activates automatically once the token is added — no workflow edit needed.
+      - name: Check for SonarCloud token
+        id: sonar_check
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if [ -n "$SONAR_TOKEN" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "SonarCloud analysis: ENABLED"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::SONAR_TOKEN is not set - skipping SonarCloud analysis and the diff-coverage gate."
+          fi
+
+      - name: Install SonarScanner
+        if: steps.sonar_check.outputs.enabled == 'true'
+        run: dotnet tool install --global dotnet-sonarscanner
+
       - name: Restore dependencies
         run: dotnet restore
+
+      # SonarScanner for .NET hooks MSBuild, so `begin` must precede the build and
+      # `end` must follow the tests. It does NOT read sonar-project.properties —
+      # analysis parameters have to be passed here as /d: arguments.
+      #
+      # Project key is `JustAGhosT_vv` — VERIFIED from the SonarCloud check URL on
+      # PR #31 (sonarcloud.io/dashboard?id=JustAGhosT_vv), not derived from the repo
+      # slug. This repo changed both org and name (JustAGhosT/vv ->
+      # neuralliquid/veritasvault); a SonarCloud key is fixed at import time and
+      # follows NEITHER, so the oldest name is the live one.
+      # Both values stay overridable via repository variables
+      # (Settings > Secrets and variables > Actions > Variables).
+      - name: SonarCloud begin
+        if: steps.sonar_check.outputs.enabled == 'true'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dotnet sonarscanner begin \
+            /k:"${{ vars.SONAR_PROJECT_KEY || 'JustAGhosT_vv' }}" \
+            /o:"${{ vars.SONAR_ORGANIZATION || 'justaghost' }}" \
+            /d:sonar.token="${SONAR_TOKEN}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
+            /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" \
+            /d:sonar.coverage.exclusions="tests/**,**/Program.cs,**/Startup.cs,**/Migrations/**" \
+            /d:sonar.qualitygate.wait=true
 
       - name: Build
         run: dotnet build --no-restore
 
       - name: Test with coverage
-        run: dotnet test --no-build --verbosity normal --settings tests/vv.Infrastructure.Tests/coverage.runsettings
+        run: |
+          dotnet test --no-build --verbosity normal \
+            --settings tests/vv.Infrastructure.Tests/coverage.runsettings \
+            --logger "trx;LogFileName=test-results.trx"
+
+      # `end` uploads analysis + coverage and, because qualitygate.wait is set above,
+      # blocks until SonarCloud returns a verdict and fails the job if the gate fails.
+      - name: SonarCloud end
+        if: steps.sonar_check.outputs.enabled == 'true'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
 
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
@@ -51,6 +140,16 @@ jobs:
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
           filename: coverage-report/Cobertura.xml
+          # Absolute-coverage regression guard. Without fail_below_min this step
+          # only reports and can never fail the build.
+          # Measured on the first run with corrected collection: 20% line
+          # (266/1300), 16% branch (73/457). The previously documented 11.5%
+          # UNDERSTATED coverage — only vv.Infrastructure.Tests was instrumented,
+          # so both numerator and denominator were a partial slice.
+          # 18 sits just under the measured value as a regression guard. Raise it
+          # toward the 35% Phase 1 target as tests land.
+          fail_below_min: true
+          thresholds: "18 60"
           badge: true
           format: markdown
           output: both
@@ -62,9 +161,13 @@ jobs:
           path: coverage-report
           if-no-files-found: error
 
+      # Cosmetic. A PR comment failing must never fail a build that passed its
+      # actual gates — the permissions fix above is the real remedy, this is the
+      # belt-and-braces so the failure mode cannot recur.
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         with:
           recreate: true
           path: code-coverage-results.md
