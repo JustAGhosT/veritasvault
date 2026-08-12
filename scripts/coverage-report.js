@@ -7,7 +7,7 @@ const fs = require("fs");
 try {
   // Run the tests
   console.log("Running tests on the solution...");
-  execSync("dotnet test " + path.join("vvPlatform.sln"), {
+  execSync("dotnet test " + path.join("vv.Platform.sln"), {
     stdio: "inherit",
   });
   console.log("Tests completed successfully");
@@ -65,14 +65,14 @@ try {
     const indexPath = path.join(reportDir, "index.html");
     try {
       // Use the 'open' package for cross-platform browser opening
-      require('open')(indexPath);
+      require("open")(indexPath);
     } catch (err) {
       // Fallback: try platform-specific commands
-      const { exec } = require('child_process');
+      const { exec } = require("child_process");
       const platform = process.platform;
-      if (platform === 'win32') {
+      if (platform === "win32") {
         exec(`start "" "${indexPath}"`);
-      } else if (platform === 'darwin') {
+      } else if (platform === "darwin") {
         exec(`open "${indexPath}"`);
       } else {
         exec(`xdg-open "${indexPath}"`);
@@ -87,11 +87,11 @@ try {
 
 // Helper function to process all coverage files and remove GitHub URLs
 function processAllCoverageFiles() {
-// Find all coverage files
-const glob = require('glob');
-const coverageFiles = glob.sync('tests/**/coverage.cobertura.xml', { 
-  absolute: true 
-});
+  // Find all coverage files
+  const glob = require("glob");
+  const coverageFiles = glob.sync("tests/**/coverage.cobertura.xml", {
+    absolute: true,
+  });
 
   console.log(`Found ${coverageFiles.length} coverage files to process`);
 
@@ -105,7 +105,7 @@ const coverageFiles = glob.sync('tests/**/coverage.cobertura.xml', {
     // Replace any GitHub URLs with local paths
     const processed = content.replace(
       /https:\/\/raw\.githubusercontent\.com\/[^\"]+\/src\//g,
-      'src/'
+      "src/",
     );
 
     // Write to a new file

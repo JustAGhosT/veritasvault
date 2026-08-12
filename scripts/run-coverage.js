@@ -27,7 +27,7 @@ try {
   console.log(
     `${colors.yellow}Running tests on the solution...${colors.reset}`,
   );
-  execSync("dotnet test vvPlatform.sln", { stdio: "inherit" });
+  execSync("dotnet test vv.Platform.sln", { stdio: "inherit" });
   console.log(`${colors.green}✅ Tests completed successfully${colors.reset}`);
 
   // Generate coverage report
