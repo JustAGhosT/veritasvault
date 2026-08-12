@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Sextant — Private Client Overview</title>
+<title>Muniment — Private Client Overview</title>
 <style>
   @page { size: 13.333in 7.5in; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -187,37 +187,34 @@
 <!-- ============ COVER ============ -->
 <section class="slide cover">
   <svg class="cover-mark" width="330" height="330" viewBox="0 0 200 200" fill="none">
-    <!-- sextant arc -->
-    <path d="M 30 170 A 140 140 0 0 1 170 30" stroke="#A56438" stroke-width="2.5" fill="none"/>
-    <path d="M 47 170 A 123 123 0 0 1 170 47" stroke="#A56438" stroke-width="1" fill="none" opacity="0.55"/>
-    <!-- degree ticks -->
-    <g stroke="#A56438" stroke-width="1.4" opacity="0.85">
-      <line x1="30"  y1="170" x2="47"  y2="170"/>
-      <line x1="34"  y1="140" x2="50"  y2="143"/>
-      <line x1="45"  y1="112" x2="60"  y2="118"/>
-      <line x1="62"  y1="88"  x2="74"  y2="98"/>
-      <line x1="88"  y1="62"  x2="98"  y2="74"/>
-      <line x1="112" y1="45"  x2="118" y2="60"/>
-      <line x1="140" y1="34"  x2="143" y2="50"/>
-      <line x1="170" y1="30"  x2="170" y2="47"/>
+    <!-- indenture: one deed cut in two along a toothed line, each half proving the other -->
+    <path d="M 36 34 L 100 34 L 92 47 L 100 60 L 92 73 L 100 86 L 92 99 L 100 112 L 92 125 L 100 138 L 92 151 L 100 164 L 36 164 Z"
+          stroke="#1F5C48" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+    <path d="M 164 34 L 108 34 L 100 47 L 108 60 L 100 73 L 108 86 L 100 99 L 108 112 L 100 125 L 108 138 L 100 151 L 108 164 L 164 164 Z"
+          stroke="#1F5C48" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+    <!-- ruled entries -->
+    <g stroke="#A56438" stroke-width="1.4" opacity="0.55">
+      <line x1="46"  y1="52" x2="82"  y2="52"/>
+      <line x1="46"  y1="66" x2="78"  y2="66"/>
+      <line x1="46"  y1="80" x2="84"  y2="80"/>
+      <line x1="46"  y1="94" x2="76"  y2="94"/>
+      <line x1="118" y1="52" x2="154" y2="52"/>
+      <line x1="122" y1="66" x2="154" y2="66"/>
+      <line x1="116" y1="80" x2="154" y2="80"/>
+      <line x1="124" y1="94" x2="154" y2="94"/>
     </g>
-    <!-- index arm + frame -->
-    <line x1="170" y1="170" x2="63" y2="87"  stroke="#1F5C48" stroke-width="2.5"/>
-    <line x1="170" y1="170" x2="30" y2="170" stroke="#1F5C48" stroke-width="2.5"/>
-    <line x1="170" y1="170" x2="170" y2="30" stroke="#1F5C48" stroke-width="2.5"/>
-    <!-- horizon mirror -->
-    <circle cx="170" cy="170" r="6" fill="none" stroke="#1F5C48" stroke-width="2"/>
-    <circle cx="63"  cy="87"  r="4.5" fill="none" stroke="#A56438" stroke-width="1.8"/>
-    <!-- sight line -->
-    <line x1="170" y1="170" x2="196" y2="144" stroke="#A56438" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>
+    <!-- seal, struck across the join -->
+    <circle cx="100" cy="134" r="18"   fill="none" stroke="#A56438" stroke-width="2.5"/>
+    <circle cx="100" cy="134" r="11.5" fill="none" stroke="#A56438" stroke-width="1" opacity="0.7"/>
+    <path d="M 100 126 L 106.5 137.5 L 93.5 137.5 Z" stroke="#1F5C48" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
   </svg>
 
   <div class="cover-inner">
     <div class="eyebrow">Private Client Access</div>
-    <div class="wordmark">SEXTANT</div>
+    <div class="wordmark">MUNIMENT</div>
     <div class="byline">by <b>VeritasVault</b></div>
     <div class="cover-rule"></div>
-    <div class="cover-tag">Know where you stand.</div>
+    <div class="cover-tag">Know what you hold — and why.</div>
     <div class="cover-sub">
       The allocation method institutions use for billion-dollar mandates, applied to your own
       digital-asset portfolio — with every decision written down.
@@ -228,7 +225,7 @@
       <div><span class="k">Contact</span><span class="v">Jurie Smit · smit.jurie@gmail.com</span></div>
     </div>
   </div>
-  <div class="footer-mark">Sextant · by VeritasVault</div>
+  <div class="footer-mark">Muniment · by VeritasVault</div>
 </section>
 
 <!-- ============ PROBLEM ============ -->
@@ -282,16 +279,17 @@
     </div>
   </div>
 
-  <div class="footer-mark">Sextant · by VeritasVault</div>
+  <div class="footer-mark">Muniment · by VeritasVault</div>
   <div class="slide-num"></div>
 </section>
 
 <!-- ============ THE METHOD ============ -->
 <section class="slide s">
   <div class="eyebrow num">The Method</div>
-  <h1 class="title">Take a reading. Then set your course.</h1>
-  <p class="subtitle">A sextant does not tell you where to sail. It tells you precisely where you
-  are, by measuring against references that do not move. Everything after that is your decision.
+  <h1 class="title">Start from evidence. Then state your case.</h1>
+  <p class="subtitle">A muniment is the document that proves what you hold and on what basis. This
+  method produces one for every allocation decision — anchored to a reference that does not move,
+  and written down before the outcome is known. Everything after that is your decision.
   This is the method we are building to — see the status page for exactly where it stands.</p>
   <div class="rule"></div>
 
@@ -299,7 +297,7 @@
     <div class="flow" style="margin-bottom:22px;">
       <div class="flow-box">
         <div class="fn">STEP ONE</div>
-        <div class="fh">Fix your position</div>
+        <div class="fh">Establish the baseline</div>
         <div class="fp">Rather than forecasting from a blank page, we begin from the returns the
         whole market's positioning already implies — a neutral, defensible reference point that
         requires no prediction from you.</div>
@@ -307,14 +305,14 @@
       <div class="flow-arrow">→</div>
       <div class="flow-box">
         <div class="fn">STEP TWO</div>
-        <div class="fh">Declare your bearing</div>
+        <div class="fh">Record your view</div>
         <div class="fp">State your views directly — “this asset will outperform that one”, or “this
         one returns 8%”. For each, you set how confident you are, and you write down why.</div>
       </div>
       <div class="flow-arrow">→</div>
       <div class="flow-box">
         <div class="fn">STEP THREE</div>
-        <div class="fh">Sail the blended course</div>
+        <div class="fh">Hold the blended position</div>
         <div class="fp">The Black-Litterman model combines both mathematically. Your portfolio tilts
         toward your views in proportion to your confidence — decisively if you are certain, barely
         if you are not.</div>
@@ -332,13 +330,13 @@
       <div class="card green">
         <h3>The instrument never overrules you</h3>
         <p>Confidence is your input, not the model's. A view you hold loosely moves the portfolio
-        slightly; one you hold firmly moves it decisively. Sextant does not decide how much you
+        slightly; one you hold firmly moves it decisively. Muniment does not decide how much you
         believe something — it works out what that belief implies for your weights.</p>
       </div>
     </div>
   </div>
 
-  <div class="footer-mark">Sextant · by VeritasVault</div>
+  <div class="footer-mark">Muniment · by VeritasVault</div>
   <div class="slide-num"></div>
 </section>
 
@@ -365,7 +363,7 @@
         </table>
       </div>
       <div class="card">
-        <h3>What Sextant tells you back</h3>
+        <h3>What Muniment tells you back</h3>
         <table style="margin-top:10px;">
           <tbody>
             <tr><th scope="row" class="lead" style="width:1.45in;">Impact</th><td>How much this view actually moved your portfolio</td></tr>
@@ -387,7 +385,7 @@
     </div>
   </div>
 
-  <div class="footer-mark">Sextant · by VeritasVault</div>
+  <div class="footer-mark">Muniment · by VeritasVault</div>
   <div class="slide-num"></div>
 </section>
 
@@ -420,7 +418,7 @@
       </div>
       <div class="card brass">
         <h3>The same method as the institutional platform</h3>
-        <p>Sextant is built on VeritasVault's allocation design, risk model and audit architecture —
+        <p>Muniment is built on VeritasVault's allocation design, risk model and audit architecture —
         the same specification we take to funds and treasury operations, not a simplified consumer
         imitation of it. The interface is adapted for individual use; the method underneath is
         identical.</p>
@@ -428,7 +426,7 @@
     </div>
   </div>
 
-  <div class="footer-mark">Sextant · by VeritasVault</div>
+  <div class="footer-mark">Muniment · by VeritasVault</div>
   <div class="slide-num"></div>
 </section>
 
@@ -478,7 +476,7 @@
         <tr>
           <th scope="row" class="lead">Automated rebalancing</th>
           <td><span class="pill soon">Coming</span></td>
-          <td>Execution will remain your decision by design — Sextant recommends, it does not trade
+          <td>Execution will remain your decision by design — Muniment recommends, it does not trade
           on your behalf.</td>
         </tr>
         <tr>
@@ -499,7 +497,7 @@
     </div>
   </div>
 
-  <div class="footer-mark">Sextant · by VeritasVault</div>
+  <div class="footer-mark">Muniment · by VeritasVault</div>
   <div class="slide-num"></div>
 </section>
 
@@ -515,13 +513,13 @@
 
     <div class="cols-3" style="max-width:10.4in; gap:22px;">
       <div class="card brass">
-        <h3>1 · Take a reading</h3>
+        <h3>1 · Look for yourself</h3>
         <p>The platform is live — open
         <strong style="color:var(--green);">veritasvault.net/standard-demo</strong> and look around
         now. No wallet, no commitment, no conversation required.</p>
       </div>
       <div class="card brass">
-        <h3>2 · Chart your own book</h3>
+        <h3>2 · Enter your own book</h3>
         <p>We take your actual holdings and show you what the allocation method says about them —
         and exactly why.</p>
       </div>
@@ -539,14 +537,14 @@
     </div>
 
     <div class="disclaimer" style="margin-top:24px; max-width:10.4in;">
-      Sextant is a portfolio analysis and allocation tool provided by VeritasVault. It does not
+      Muniment is a portfolio analysis and allocation tool provided by VeritasVault. It does not
       provide investment advice, and nothing in this document is a recommendation to buy, sell or
       hold any asset. No representation is made as to future performance. Digital assets carry
       substantial risk, including total loss of capital. You remain solely responsible for your
       investment decisions.
     </div>
   </div>
-  <div class="footer-mark">Sextant · by VeritasVault</div>
+  <div class="footer-mark">Muniment · by VeritasVault</div>
 </section>
 
 </body>
