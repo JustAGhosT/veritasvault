@@ -1,8 +1,21 @@
 # VeritasVault Estate Consolidation — Planning Spike
 
-**Status:** planning only. No archiving, deletion, or repo transfer performed.
 **Date:** 2026-08-12
 **Risk addressed:** "Estate fragmentation" — `docs/investor/veritasvault-investor-overview.html:1251`
+
+**Status: partially executed.** This began as a planning-only spike; execution of Phases 0–4 was authorised on 2026-08-12.
+
+| Phase                | State                                                                                                                                                                                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0 — mirror backups   | **Done.** All 15 artifacts, full history, 87 MB → `C:\Users\smitj\backups\vv-estate-20260812`. Verified reachable-refs, not shallow. **Outstanding: Vercel env-var and cron-schedule capture (§5a) — not yet done, and not possible without Vercel access.** |
+| 1 — zero-risk fixes  | **Not done.** Needs GoDaddy access (delete `docs` CNAME) and Vercel access (`vercel.json`). Lockfile de-dup and the `wss://api.yourdomain.com` placeholder are still open.                                                                                   |
+| 2 — archive the dead | **Done.** 9 repos archived: `vv-chain`, `vv-docs-v1`, `vv-documentation`, `vv-auth-frontend-demo`, `veritasvault-cognitive-mesh-nexus`, `vv-auth`, `vv-chain-services`, `vv-dev-tools`, `phoenixvc/phoenix-marketdata`. Nothing deleted.                     |
+| 3 — absorb into `vv` | **Done, pending merge.** `vv-iac` → `infra/`, `vv-chain` → `contracts/` via subtree, history preserved (126 → 138 commits). PR #28. `vv-iac` stays active until it merges.                                                                                   |
+| 4 — renames          | **Done.** `vv` → `veritasvault`, `vv-landing` → `veritasvault-web`. PRs and production both verified intact.                                                                                                                                                 |
+| 5 — DNS to Terraform | Not started. Needs GoDaddy access.                                                                                                                                                                                                                           |
+| 5a — Vercel → Azure  | Not started. Decided 2026-08-12; largest remaining item.                                                                                                                                                                                                     |
+| 6 — org transfer     | **Blocked** — token lacks `admin:org`.                                                                                                                                                                                                                       |
+| 7 — quality baseline | Not started.                                                                                                                                                                                                                                                 |
 
 > _"Eleven repositories with divergent activity raise coordination and drift cost.
 > Consolidate or archive dormant repos; one release process across the active core."_
@@ -175,19 +188,55 @@ The "nl sub" is confirmed as `bb4e3882-2079-4bab-8974-611bc0b8bb58` — the same
 
 This is also why the repos should live in `neuralliquid` (§8): the org that owns the DNS zone for `veritasvault.net` ends up owning the code that the zone points at, and `products/veritasvault.yaml` serves both the DNS module and the product registry. Splitting repo ownership and DNS ownership across two orgs was the weakest part of the alternative.
 
-### The pattern gap
+### The pattern gap is transitional, not permanent
 
-The existing module is built for one shape: `<product>.neuralliquid.ai` CNAME → `*.azurewebsites.net`, paired with an `asuid.*` TXT for App Service hostname verification. **`veritasvault.net` fits none of that** — it is a separate apex zone, and it points at **Vercel**, not App Service.
+The existing module is built for one shape: `<product>.neuralliquid.ai` CNAME → `*.azurewebsites.net`, paired with an `asuid.*` TXT for App Service hostname verification. `veritasvault.net` fits none of that **today** — it is a separate apex zone pointing at Vercel.
 
-So this is not an extension of `product_cnames`; it needs a second, Vercel-flavoured zone block:
+But hosting is moving off Vercel to Azure (§5a). That means the module gap closes on its own: the end state is exactly the App-Service-plus-`asuid` shape the module already models. So build the zone in two steps rather than designing around Vercel permanently.
 
-- `azurerm_dns_zone` for `veritasvault.net` (**new zone — nothing to import**)
+**Step 1 — interim, Vercel-shaped.** Replicate what exists so the NS cutover is a no-op for users:
+
+- `azurerm_dns_zone` for `veritasvault.net` (**new zone — nothing to import**, so `imports.tf` gains no entries)
 - apex `azurerm_dns_a_record` → `76.76.21.21`
 - `azurerm_dns_cname_record` for `www`, `games` → `cname.vercel-dns.com`
 - `azurerm_dns_mx_record` + SPF/verification `azurerm_dns_txt_record` — **replicated from GoDaddy, not invented**
 - **no `docs` record** — dropping it is the fix for the dangling CNAME (§7)
 
-Because the zone is new, `imports.tf` gains no entries; the risk moves entirely into the NS cutover.
+**Step 2 — after the Azure cutover.** Replace the apex A and `www`/`games` CNAMEs with the standard `product_cnames` + `app_service_validation_records` entries, and add `products/veritasvault.yaml`. At that point VeritasVault is just another row in the existing module.
+
+Sequence the NS cutover **before** the hosting migration. Two reasons: it is the smaller change, and once the zone is in Terraform, the hosting cutover becomes a reviewable diff instead of a manual dashboard edit.
+
+---
+
+## 5a. Vercel → Azure hosting migration
+
+_Decided 2026-08-12: hosting moves off Vercel to Terraform-managed Azure. This section scopes what that actually costs — it is a larger change than the DNS move._
+
+### Azure Static Web Apps is not a viable target
+
+Measured against `vv-landing` as it exists:
+
+| Coupling                                                     | Evidence                                                                          | Consequence on Azure                                                                                                                                               |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`middleware.ts`** (62 lines)                               | present at repo root                                                              | Next middleware needs a real Node server. **Static Web Apps does not support it properly** → the target must be **App Service (Node)** or **Container Apps**       |
+| **45 API routes** + `next-auth` + `force-dynamic` (3 routes) | `app/api/**/route.ts`                                                             | Confirms a long-running Node runtime, not managed functions                                                                                                        |
+| **`export const runtime = "edge"`** on 2 routes              | `app/api/og/{corporate,standard}/route.tsx` using `next/og` `ImageResponse`       | **Edge runtime does not exist on App Service or Container Apps.** Must be switched to `nodejs`. `next/og` does run under Node on Next 15, but each needs verifying |
+| **`@vercel/analytics`**                                      | `package.json`, `app/VersionSelectionPage.tsx`, `lib/analytics/auth-analytics.ts` | Must be replaced — Application Insights is the natural swap                                                                                                        |
+| **Vercel Cron**                                              | `app/api/cron/sync/route.ts`, gated on `process.env.CRON_SECRET`                  | Needs an Azure timer trigger (Function or Container App job) calling the endpoint with the secret                                                                  |
+
+**Recommendation: Container Apps.** It gives a plain Node runtime for `next start`, supports middleware and all 45 routes unchanged, and the org already has Container Apps precedent (`sluice`). App Service (Node) is the lower-ceiling alternative.
+
+### The schedule is not in git
+
+There is no `vercel.json` (§4.1), so **the Vercel Cron schedule exists only in the dashboard**. It is not recoverable from the repo, and unlike env vars there is no `vercel env pull` equivalent for it. **Capture the cron schedule during Phase 0**, alongside the env-var export — otherwise `sync-service` silently stops running after the migration and nothing fails loudly.
+
+### What stays on Vercel until explicitly moved
+
+`games.veritasvault.net` (`vv-game-suite`) is a second live Vercel project. It is a static WebGL/Phaser build with no middleware and no API routes, so it is a genuinely easy Static Web Apps candidate — but it is **out of scope for the first migration**. Move `veritasvault-web` first, leave games alone, and keep its Vercel CNAME in the Terraform zone (Step 1 above) until it is moved deliberately.
+
+### Ordering against the rest of this plan
+
+The hosting migration is the **largest** item in this document and depends on the org transfer having settled. Slot it after Phase 6, not before — attempting it while repo ownership is still moving means debugging two cutovers at once. The env-var and cron capture, however, belongs in **Phase 0**, because that data is lost the moment the Vercel project is disturbed.
 
 ### Hazards — read before executing
 
@@ -305,13 +354,16 @@ Every phase is independently reversible. Reversibility degrades left-to-right, s
 
 ### Phase 0 — Safety net _(fully reversible; do this first)_
 
-1. **Mirror-clone all 15 artifacts** (`git clone --mirror`) to durable offline storage, including `phoenixvc/phoenix-marketdata` and `VeritasVault-ai/vv-docs-archive`. This is the precondition for every later step — nothing below is safe without it.
-2. Export GoDaddy zone verbatim (file + screenshot).
-3. `vercel env pull` for the `vv-landing` project; store securely outside git.
-4. Screenshot Vercel project settings (Root Directory, build command, Node version, install command) for **both** `vv-landing` and `vv-game-suite`.
-5. Record the current `tsc --noEmit` error count for `vv-landing` as the §6 baseline.
+1. ~~**Mirror-clone all 15 artifacts** (`git clone --mirror`) to durable offline storage, including `phoenixvc/phoenix-marketdata` and `VeritasVault-ai/vv-docs-archive`.~~ **Done** — 87 MB at `C:\Users\smitj\backups\vv-estate-20260812`, full history verified. This was the precondition for every later step.
+2. Export GoDaddy zone verbatim (file + screenshot). **Outstanding.**
+3. `vercel env pull` for the `veritasvault-web` project; store securely outside git. **Outstanding.**
+4. **Capture the Vercel Cron schedule** for `app/api/cron/sync/route.ts`. **Outstanding, and the easiest thing here to lose** — there is no `vercel.json`, so the schedule exists only in the dashboard and has no `env pull` equivalent (§5a). If it is lost, `sync-service` stops running after the Azure migration and nothing fails loudly.
+5. Screenshot Vercel project settings (Root Directory, build command, Node version, install command) for **both** `veritasvault-web` and `vv-game-suite`. **Outstanding.**
+6. Record the current `tsc --noEmit` error count for `veritasvault-web` as the §6 baseline. **Outstanding.**
 
 **Rollback:** nothing changed.
+
+> Steps 2–6 all need GoDaddy or Vercel credentials and could not be completed from this session. **They are preconditions for Phases 1, 5 and 5a** — none of those should start until steps 2–6 are done.
 
 ### Phase 1 — Zero-risk fixes _(reversible; no consolidation yet)_
 
