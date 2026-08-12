@@ -7,6 +7,17 @@ on:
     branches: [main, master, develop]
   workflow_dispatch:
 
+# Declared explicitly rather than inherited. The workflow previously relied on
+# the repo's default GITHUB_TOKEN scopes and started failing with "Resource not
+# accessible by integration" when those tightened — an unrelated settings change
+# breaking the build is exactly what an explicit block prevents.
+# Note: this can only narrow what the repo/org already allows. If the org
+# enforces a read-only token, `pull-requests: write` here has no effect and the
+# setting must be changed at Settings > Actions > General > Workflow permissions.
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build:
     name: Build and Test
@@ -150,9 +161,13 @@ jobs:
           path: coverage-report
           if-no-files-found: error
 
+      # Cosmetic. A PR comment failing must never fail a build that passed its
+      # actual gates — the permissions fix above is the real remedy, this is the
+      # belt-and-braces so the failure mode cannot recur.
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         with:
           recreate: true
           path: code-coverage-results.md
