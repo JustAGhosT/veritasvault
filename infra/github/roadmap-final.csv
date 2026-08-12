@@ -1,0 +1,40 @@
+Title,Body,Repo,Label1,Label2,Sprint,Estimate,Assignee
+Create mono-repo skeleton (game-suite),"Turborepo, workspaces, eslint/prettier config",vv-game-suite,infra,setup,Sprint-0,1,dev-alex
+Migrate landing POC to vv-landing,"Move existing Next.js code into new repo structure",vv-landing,infra,migration,Sprint-0,1,dev-mia
+Seed Vercel preview + prod projects,"Hook env vars, custom domains",vv-landing,devops,vercel,Sprint-0,0.5,ops-luis
+Bootstrap Docusaurus site,"Tailwind plugin, Algolia keys, dark-mode",vv-docs,docs,setup,Sprint-0,1,docs-lee
+Provision staging VPC & EKS,"Network module + EKS cluster",vv-iac,iac,cluster,Sprint-0,1.5,ops-luis
+Create GitHub Actions base templates,"Lint, test, build matrix for all repos",vv-iac,ci,,Sprint-0,1,dev-alex
+Cookie-based version router,"Middleware + contributor docs",vv-landing,feature,routing,Sprint-1,0.5,dev-mia
+Marketing hero MDX conversion,"Hero, how-it-works, AI pages to MDX",vv-landing,content,mdx,Sprint-1,1,content-sam
+Real-time signal feed WebSocket,"Connect breakout-game to /signals API",vv-game-suite,backend,ws,Sprint-1,2,dev-tariq
+Design tokens npm publish,"Tokens package, semantic release",vv-game-suite,design-system,,Sprint-1,0.5,design-jules
+Fastify /signals endpoint,"Query Postgres price_cache, return JSON",vv-chain-services,api,backend,Sprint-1,1,dev-sara
+Tezos + EVM indexer alpha,"Stream heads, parse events, insert raw rows",vv-chain-services,indexer,blockchain,Sprint-1,3,dev-sara
+RDS Postgres cluster (staging),"Multi-AZ, 2×t3.medium, encrypted",vv-iac,iac,db,Sprint-1,1,ops-luis
+Redis Global datastore (staging),"ElastiCache global, 2 shards",vv-iac,iac,cache,Sprint-1,0.5,ops-luis
+Contact form → API route + email,"SendGrid webhook, server action",vv-landing,feature,api,Sprint-2,1,dev-mia
+Cypress smoke & regression pack,"Chooser flow, contact, 404, sitemap",vv-landing,qa,test,Sprint-2,1,qa-erin
+Leaderboard sorted-set,"Redis ZADD, GET top N, integrate game UI",vv-game-suite,feature,redis,Sprint-2,1,dev-tariq
+Error tracking (Sentry),"Install in landing & game repos",vv-game-suite,observability,,Sprint-2,0.5,ops-luis
+Risk-bot v1,"Cron every 60 s calculates vault LTV, pushes alert→Redis",vv-chain-services,risk,cron,Sprint-2,1,dev-sara
+OpenAPI spec + Swagger UI,"Autogen Fastify routes, publish at /docs",vv-chain-services,api,docs,Sprint-2,0.5,dev-alex
+CloudFront + ACM for static sites,"S3 buckets, CF distro, certs → docs + landing",vv-iac,iac,cdn,Sprint-2,1,ops-luis
+Lighthouse budgets,"≤150 KB JS, LCP < 2.5 s",vv-landing,perf,,Sprint-2,0.5,qa-erin
+Launch docs v1,"Publish API + architecture pages",vv-docs,docs,release,Sprint-2,0.5,docs-lee
+Soft-conversion flow,"Email/Discord OAuth, save leaderboard",vv-game-suite,auth,feature,Sprint-3,2,dev-tariq
+Pro-mode 5-minute gameplay,"Timer logic, extended levels, cookie gating",vv-game-suite,feature,gameplay,Sprint-3,2,dev-tariq
+JWT auth for /scores POST,"Supabase verify, rate-limit 100 req/min",vv-chain-services,security,api,Sprint-3,1,dev-alex
+Enterprise CTA split-test,"Edge config A/B corporate vs standard hero",vv-landing,growth,experiment,Sprint-3,1,content-sam
+Docs localization (es),"Add Spanish i18n folder, crowdin sync",vv-docs,i18n,,Sprint-3,1,docs-lee
+IaC prod promotion,"Replicate staging modules, set capacity targets",vv-iac,iac,prod,Sprint-3,1.5,ops-luis
+Prometheus ServiceMonitor,"Export metrics from api-gateway & risk-bot",vv-chain-services,observability,,Sprint-4,0.5,ops-luis
+Add WAF rules to CloudFront,"SQLi, XSS, bot block",vv-iac,security,waf,Sprint-4,0.5,ops-luis
+Percy visual regression,"Landing & game critical flows baseline",vv-landing,qa,visual,Sprint-4,0.5,qa-erin
+Rate-limit /signals,"Redis sliding-window lua 200 rpm",vv-chain-services,security,rate-limit,Sprint-4,0.5,dev-sara
+Edge redirect registry,"Non-devs can add shortlinks via JSON config",vv-landing,growth,edge,Sprint-4,1,dev-mia
+Docs version 2 + CLI autogen,"Release docs v2 alongside API changes",vv-docs,epic,docs,Sprint-5,3,docs-lee
+GraphQL Gateway PoC,"Hasura on Postgres; SDL security audit",vv-chain-services,epic,graphql,Sprint-5,5,dev-alex
+Global edge cache for price-ticks,"Upstash Global or ElastiCache Global",vv-game-suite,epic,perf,Sprint-5,3,ops-luis
+White-label landing instances,"Theming variables + runtime sub-domains",vv-landing,epic,enterprise,Sprint-5,4,dev-mia
+Chaos testing for risk-bot,"Failure injection; auto-rollback via Argo",vv-chain-services,epic,chaos,Sprint-5,3,dev-sara

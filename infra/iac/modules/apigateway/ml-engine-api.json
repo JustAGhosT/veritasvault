@@ -1,0 +1,303 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "ML Engine API",
+    "description": "Risk analysis and machine learning services for VeritasVault",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://ml-engine-{environment}.veritasvault.ai",
+      "variables": {
+        "environment": {
+          "default": "prod",
+          "enum": [
+            "dev",
+            "test",
+            "prod"
+          ]
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/risk/analyze": {
+      "post": {
+        "summary": "Analyze risk for a given position",
+        "description": "Performs risk analysis on a position using machine learning models",
+        "operationId": "analyzeRisk",
+        "requestBody": {
+          "description": "Position data to analyze",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskAnalysisRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Risk analysis results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAnalysisResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/risk/batch": {
+      "post": {
+        "summary": "Batch analyze risk for multiple positions",
+        "description": "Performs risk analysis on multiple positions using machine learning models",
+        "operationId": "batchAnalyzeRisk",
+        "requestBody": {
+          "description": "Multiple positions to analyze",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/RiskAnalysisRequest"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch risk analysis results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RiskAnalysisResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Check API health",
+        "description": "Returns the health status of the API",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "API is unhealthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "unhealthy"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "example": "Database connection failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RiskAnalysisRequest": {
+        "type": "object",
+        "required": [
+          "positionId",
+          "collateralAsset",
+          "debtAsset",
+          "collateralAmount",
+          "debtAmount"
+        ],
+        "properties": {
+          "positionId": {
+            "type": "string",
+            "description": "Unique identifier for the position",
+            "example": "pos_12345"
+          },
+          "collateralAsset": {
+            "type": "string",
+            "description": "Asset used as collateral",
+            "example": "ETH"
+          },
+          "debtAsset": {
+            "type": "string",
+            "description": "Asset borrowed as debt",
+            "example": "USDC"
+          },
+          "collateralAmount": {
+            "type": "number",
+            "format": "double",
+            "description": "Amount of collateral",
+            "example": 10.5
+          },
+          "debtAmount": {
+            "type": "number",
+            "format": "double",
+            "description": "Amount of debt",
+            "example": 15000
+          },
+          "historicalData": {
+            "type": "boolean",
+            "description": "Whether to include historical data in analysis",
+            "default": false
+          }
+        }
+      },
+      "RiskAnalysisResponse": {
+        "type": "object",
+        "properties": {
+          "positionId": {
+            "type": "string",
+            "description": "Unique identifier for the position",
+            "example": "pos_12345"
+          },
+          "riskScore": {
+            "type": "number",
+            "format": "double",
+            "description": "Risk score from 0 (lowest risk) to 100 (highest risk)",
+            "example": 65.7
+          },
+          "ltv": {
+            "type": "number",
+            "format": "double",
+            "description": "Loan-to-Value ratio",
+            "example": 0.75
+          },
+          "liquidationPrice": {
+            "type": "number",
+            "format": "double",
+            "description": "Price at which position will be liquidated",
+            "example": 1250.45
+          },
+          "recommendations": {
+            "type": "array",
+            "description": "Risk mitigation recommendations",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Add more collateral",
+              "Reduce debt"
+            ]
+          },
+          "analysisTimestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the analysis",
+            "example": "2023-05-01T12:00:00Z"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "example": "InvalidRequest"
+              },
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

@@ -147,6 +147,7 @@
   }
   .pill.live { background:rgba(31,92,72,0.12); color:var(--green); border:1px solid rgba(31,92,72,0.32); }
   .pill.soon { background:rgba(165,100,56,0.11); color:var(--brass); border:1px solid rgba(165,100,56,0.32); }
+  .pill.none { background:rgba(106,119,111,0.10); color:var(--muted); border:1px solid rgba(106,119,111,0.30); }
 
   .flow { display:grid; grid-template-columns:1fr 24px 1fr 24px 1fr; align-items:stretch; }
   .flow-box {
@@ -476,10 +477,11 @@
           market-data service. We will tell you which, on the day you join.</td>
         </tr>
         <tr>
-          <th scope="row" class="lead">Automated rebalancing</th>
-          <td><span class="pill soon">Coming</span></td>
-          <td>Execution will remain your decision by design — Sextant recommends, it does not trade
-          on your behalf.</td>
+          <th scope="row" class="lead">Execution &amp; rebalancing</th>
+          <td><span class="pill none">Not planned</span></td>
+          <td>Sextant recommends; it does not trade on your behalf. Execution stays your decision by
+          design, and automated rebalancing is deliberately out of scope for the private-client
+          product rather than pending.</td>
         </tr>
         <tr>
           <th scope="row" class="lead">Independent security audit</th>
