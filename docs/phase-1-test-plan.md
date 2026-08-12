@@ -1,3 +1,17 @@
+---
+document_type: specification
+classification: internal
+status: draft
+version: 0.1.0
+last_updated: '2026-08-12'
+applies_to:
+- Core
+reviewers:
+- '@tech-lead'
+priority: p1
+next_review: '2026-11-12'
+---
+
 # Phase 1 Test Plan — VeritasVault Estate
 
 Spike output. Prioritised plan to close the automated-testing gap across
