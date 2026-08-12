@@ -120,27 +120,60 @@ Only `vv.Infrastructure.Tests` was ever instrumented. That is why the denominato
 4,696 / Core 1,310 / Application 2,230) — ~5.7%, where C# sequence-point density normally runs
 30–45%.
 
-Both defects are fixed in this change (coverlet added to `vv.Api.Tests`; `[vv.Api]*` added to the
-runsettings `Include`). **`vv.Application.Tests` still has no project file** — creating one is a
+The collector defect is fixed in this change (coverlet added to `vv.Api.Tests`; `[vv.Api]*` added to
+the runsettings `Include`). **`vv.Application.Tests` still has no project file** — creating one is a
 separate task, and doing so will surface two previously-unrun tests that may not pass.
 
-_Boundary: the suite has not been executed here. The re-baselined figure is expected to move — most
-likely down, since the denominator grows. Confirm on the first green run before quoting any .NET
-coverage number externally._
+### Re-baselined figures — measured
 
-Proposed .NET Phase 1 gate, **after** re-baselining:
+Run [31549457020](https://github.com/JustAGhosT/veritasvault/actions/runs/31549457020), first green
+build with corrected collection. 69 tests across two projects (64 Infrastructure, 5 Api); 62 passed,
+7 skipped.
 
-| Scope               | Line | Branch |
-| ------------------- | ---- | ------ |
-| `vv.Infrastructure` | 45%  | 35%    |
-| Solution overall    | 35%  | 25%    |
+| Package             | Line               | Branch           |
+| ------------------- | ------------------ | ---------------- |
+| `vv.Infrastructure` | 22%                | 18%              |
+| `vv.Core`           | 21%                | 13%              |
+| `vv.Application`    | 0%                 | 0%               |
+| `vv.Api`            | 0%                 | 0%               |
+| **Solution**        | **20%** (266/1300) | **16%** (73/457) |
+
+**The previously documented figures understated coverage — they did not overstate it.** 11.5%
+(54/468) → **20% (266/1300)**, and `vv.Infrastructure`'s documented 1.5% is actually **22%**. The
+diagnosis was right (only one project was ever instrumented) but the consequence ran the other way:
+both numerator and denominator were a partial slice, and the numerator was the more understated of
+the two. `docs/README.md` should be corrected.
+
+Two results confirm findings above and are worth acting on:
+
+- **`vv.Application` at 0%** is the missing `.csproj` — those tests genuinely never run.
+- **`vv.Api` at 0% despite its 5 tests passing.** The assembly is now instrumented and appears in
+  the report, but nothing covers it, so `MarketDataControllerTests` exercises no `vv.Api` code.
+  A passing test suite that covers none of its target is worth a look before it is counted as
+  evidence of anything.
+- **7 skipped tests**, including `QueryOperationTests.QueryAsync_ShouldReturnFilteredResults` and
+  `QueryWithPaginationAsync_ShouldHandleMultiplePages` — query behaviour is priority 2 in §5, and
+  its existing tests are switched off.
+
+Proposed .NET Phase 1 gate, against the measured baseline above:
+
+| Scope               | Now     | Phase 1 gate | Delta |
+| ------------------- | ------- | ------------ | ----- |
+| `vv.Infrastructure` | 22%/18% | 45% / 35%    | ~2x   |
+| Solution overall    | 20%/16% | 35% / 25%    | ~1.8x |
 
 Rationale: Infrastructure is the largest project (4,696 LOC) and holds the correctness risk. 45% is
-what the ranked work below (Cosmos repository 603 LOC, query extensions 447, versioned repository
+what the ranked work in §5 (Cosmos repository 603 LOC, query extensions 447, versioned repository
 343, versioning component 170, mappers ~200) actually buys — those five areas are ~1,760 LOC, and
-covering them well lands Infrastructure near 45% on its own. Note the existing
-`coverage-threshold.xml` already declares 50% for Infrastructure — 45% is chosen as the honest
-first ratchet, with 50% as the next step, not the Phase 1 gate.
+covering them well lands Infrastructure near 45% on its own.
+
+Honest framing of the delta: this is roughly a doubling, not the ~30x climb the documented 1.5%
+implied. The starting position is materially better than the register records — which makes the
+Phase 1 .NET target more credible, not less. The existing `coverage-threshold.xml` declares 50% for
+Infrastructure; 45% is the honest first ratchet, with 50% next.
+
+The CI regression floor is set at **18%** (just under measured), not at the 35% target — a gate you
+fail on day one is a gate people route around. Ratchet it upward as tests land.
 
 ---
 

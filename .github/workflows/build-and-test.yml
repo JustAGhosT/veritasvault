@@ -130,11 +130,14 @@ jobs:
           filename: coverage-report/Cobertura.xml
           # Absolute-coverage regression guard. Without fail_below_min this step
           # only reports and can never fail the build.
-          # NOTE: 10 is a provisional floor set below the last published figure
-          # (11.5%). The denominator is being re-baselined — confirm on the first
-          # green run and raise toward the 35% Phase 1 target as tests land.
+          # Measured on the first run with corrected collection: 20% line
+          # (266/1300), 16% branch (73/457). The previously documented 11.5%
+          # UNDERSTATED coverage — only vv.Infrastructure.Tests was instrumented,
+          # so both numerator and denominator were a partial slice.
+          # 18 sits just under the measured value as a regression guard. Raise it
+          # toward the 35% Phase 1 target as tests land.
           fail_below_min: true
-          thresholds: "10 60"
+          thresholds: "18 60"
           badge: true
           format: markdown
           output: both
