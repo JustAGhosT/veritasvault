@@ -29,10 +29,10 @@
 
 The premise of the task was "clear it before it is used externally." That has already happened.
 
-| Fact                               | Evidence                                                                                                  |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Repo `JustAGhosT/vv` is **PUBLIC** | `gh repo view --json visibility` → `PUBLIC`                                                               |
-| Deck is on the default branch      | `docs/investor/sextant-private-deck.html` + `Sextant-Private-Deck.pdf` on `origin/main`, commit `4d08aad` |
+| Fact                                           | Evidence                                                                                                                                                                                                                                       |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Repo `neuralliquid/veritasvault` is **PUBLIC** | `gh repo view --json nameWithOwner,visibility` → `neuralliquid/veritasvault`, `PUBLIC`. Note: `JustAGhosT/vv` is a **redirect alias**, not the canonical name — `gh api repos/JustAGhosT/vv` silently resolves to `neuralliquid/veritasvault`. |
+| Deck is on the default branch                  | `docs/investor/sextant-private-deck.html` + `Sextant-Private-Deck.pdf` on `origin/main`, commit `4d08aad`                                                                                                                                      |
 
 Both the HTML deck and the rendered PDF are world-readable on GitHub right now. Anyone
 searching the repo, and any code-search index, can see the private-client tier branded
@@ -361,6 +361,18 @@ honest answer costs a slide.
 That's a sharper reason to fix it than trademark risk, and it doesn't depend on how the
 Sextant decision lands.
 
+**This is stronger than first assessed.** The VeritasVault repository does not merely share a
+word with the separate venture — **it lives inside that venture's GitHub organisation.** The
+canonical repo is `neuralliquid/veritasvault`; `JustAGhosT/vv` is only a redirect alias that
+resolves silently, which is why the earlier pass recorded the wrong owner. An investor running
+code diligence does not find a VeritasVault repo that happens to use the phrase "Neural
+Liquidity" — they land on `github.com/neuralliquid/veritasvault` and see the platform hosted
+under another company's org. That converts the naming question into an asset-ownership
+question, which is a materially harder one to answer in a data room.
+
+Renaming the product tier does not by itself resolve this. The repository's home org is the
+larger issue and is worth a deliberate decision before any raise.
+
 **Recommendation:** apply the same masterbrand logic — make it a descriptor, not a brand.
 
 | Current                                      | Proposed                                                                             |
@@ -373,7 +385,7 @@ and the marketing spend compounds into a single mark.
 
 ### Scoping note for the rename
 
-`product-info.ts` is **not in this repository.** This repo (`JustAGhosT/vv`) is a .NET
+`product-info.ts` is **not in this repository.** This repo (`neuralliquid/veritasvault`) is a .NET
 solution plus docs; a full grep for `STANDARD_PRODUCT_NAME`, `Neural Liquidity`,
 `NeuralLiquid` and `TrueMoney` across all source and markdown returns nothing. The constant
 lives in **`JustAGhosT/vv-landing`** at `lib/config/product-info.ts`, so the code change is
