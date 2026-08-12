@@ -3,13 +3,13 @@ document_type: guide
 classification: internal
 status: draft
 version: 0.1.0
-last_updated: '2025-05-31'
+last_updated: "2025-05-31"
 applies_to:
-- Core
+  - Core
 reviewers:
-- '@tech-lead'
+  - "@tech-lead"
 priority: p2
-next_review: '2026-05-31'
+next_review: "2026-05-31"
 ---
 
 ```src/vv.Domain/Docs/Domains/Asset/black-litterman-views.md
@@ -148,6 +148,17 @@ For consistent confidence scaling:
    * $\Omega_{ii} = (P\Sigma P^T)_{ii} \times \frac{1-c_i}{c_i}$
    * Where $c_i \in (0,1]$ is confidence percentage
 
+> **ERRATA — see ADR-0001 §D1**
+> (`docs/adr/0001-black-litterman-model-conventions.md`, repository root).
+> The implemented form includes $\tau$:
+> $\Omega_{ii} = (P(\tau\Sigma)P^T)_{ii}\times\frac{1-c_i}{c_i}$, matching
+> `calibrate_omega` in [black-litterman-implementation.md](./black-litterman-implementation.md).
+> Endpoint handling is defined rather than left to the formula: $c_i = 0$ **drops
+> the view's row from $P$ and $Q$** (exactly equivalent to the $\Omega\to\infty$
+> limit, and numerically clean where clamping is not), and $c_i = 1$ gives
+> $\Omega_{ii} = 0$, which is well-posed only in the covariance form of the
+> posterior, not the precision form.
+
 ## Multiple View Management
 
 ### Consistency Checking
@@ -246,3 +257,4 @@ For more detailed information on specific aspects, see:
 * [Black-Litterman Model](./black-litterman-model.md)
 * [Black-Litterman Implementation](./black-litterman-implementation.md)
 * [Black-Litterman Validation](./black-litterman-validation.md)
+```
