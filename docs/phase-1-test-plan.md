@@ -217,10 +217,13 @@ performed in SonarCloud by someone with admin on the project:
 2. **Disable Automatic Analysis.** SonarCloud → _Project → Administration → Analysis Method_ →
    turn off Automatic Analysis. CI-based analysis is rejected while it is on, and Automatic
    Analysis never imports coverage.
-3. **Confirm the project key and organization.** `build-and-test.yml` uses
-   `/k:"JustAGhosT_vv" /o:"justaghost"`, derived from the GitHub slug by SonarCloud's usual import
-   convention. **This is a convention-based guess and has not been verified** — check the real
-   values on the project's _Information_ page and correct the workflow if they differ.
+3. **Confirm the project key and organization.** This one needs care: **the repo was renamed
+   `vv` → `veritasvault`**, and `https://github.com/JustAGhosT/vv.git` still resolves only because
+   GitHub redirects renamed repos. A SonarCloud project key is fixed at import time and does **not**
+   follow a repo rename, so the real key is `JustAGhosT_veritasvault` or `JustAGhosT_vv` depending
+   on when the project was imported. The workflow defaults to the former and reads an override from
+   the `SONAR_PROJECT_KEY` / `SONAR_ORGANIZATION` repository variables, so correcting it needs no
+   code change — check the project's _Information_ page and set the variable if the default is wrong.
 4. **Add the gate condition.** SonarCloud → _Quality Gates_ → the gate applied to this project →
    _Add Condition_ → On New Code → **Coverage** → **is less than 70%**. Keep the existing
    A-reliability-on-new-code condition.
