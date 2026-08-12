@@ -18,6 +18,10 @@ const colors = {
   red: "\x1b[31m",
 };
 
+// Anchor every path to the repo root rather than process.cwd(), so this works
+// from a subdirectory or a git worktree. This file lives in <repoRoot>/scripts/.
+const repoRoot = path.resolve(__dirname, "..");
+
 console.log(
   `${colors.cyan}Running tests and generating coverage reports...${colors.reset}`,
 );
@@ -27,7 +31,13 @@ try {
   console.log(
     `${colors.yellow}Running tests on the solution...${colors.reset}`,
   );
-  execSync("dotnet test vvPlatform.sln", { stdio: "inherit" });
+  const solutionPath = path.join(repoRoot, "vv.Platform.sln");
+  if (!fs.existsSync(solutionPath)) {
+    throw new Error(`Solution file not found: ${solutionPath}`);
+  }
+  // Bare filename + cwd, so a repo path containing spaces never has to survive
+  // shell quoting.
+  execSync("dotnet test vv.Platform.sln", { stdio: "inherit", cwd: repoRoot });
   console.log(`${colors.green}✅ Tests completed successfully${colors.reset}`);
 
   // Generate coverage report
@@ -53,7 +63,7 @@ try {
     }
 
     // Set up the report directory
-    const reportDir = path.join("coverage-report");
+    const reportDir = path.join(repoRoot, "coverage-report");
 
     // Clear existing coverage reports
     if (fs.existsSync(reportDir)) {

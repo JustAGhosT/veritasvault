@@ -4,11 +4,23 @@ const { execSync } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 
+// Anchor every path to the repo root, not process.cwd(): this runs from a
+// post-commit hook, which may fire from a subdirectory or a git worktree.
+// This file lives in <repoRoot>/scripts/, so one level up is always the root.
+const repoRoot = path.resolve(__dirname, "..");
+const solutionPath = path.join(repoRoot, "vv.Platform.sln");
+
 try {
-  // Run the tests
+  if (!fs.existsSync(solutionPath)) {
+    throw new Error(`Solution file not found: ${solutionPath}`);
+  }
+
+  // Run from repoRoot with a bare filename so a repo path containing spaces
+  // never has to survive shell quoting.
   console.log("Running tests on the solution...");
-  execSync("dotnet test " + path.join("vvPlatform.sln"), {
+  execSync("dotnet test vv.Platform.sln", {
     stdio: "inherit",
+    cwd: repoRoot,
   });
   console.log("Tests completed successfully");
 
@@ -29,7 +41,7 @@ try {
     }
 
     // Generate the report using coverage files from ALL test projects
-    const reportDir = path.join("coverage-report");
+    const reportDir = path.join(repoRoot, "coverage-report");
 
     // Clear existing coverage reports
     if (fs.existsSync(reportDir)) {
@@ -47,6 +59,7 @@ try {
 
     // Run ReportGenerator on the processed files
     const processedGlob = path.join(
+      repoRoot,
       "tests",
       "**",
       "TestResults",
@@ -54,10 +67,11 @@ try {
       "processed.coverage.cobertura.xml",
     );
     execSync(
-      `reportgenerator "-reports:${processedGlob}" "-targetdir:${reportDir}" "-reporttypes:Html" "-sourcedirs:${process.cwd()}" "-verbosity:Warning"`,
+      `reportgenerator "-reports:${processedGlob}" "-targetdir:${reportDir}" "-reporttypes:Html" "-sourcedirs:${repoRoot}" "-verbosity:Warning"`,
       {
         stdio: "inherit",
         shell: true,
+        cwd: repoRoot,
       },
     );
 
@@ -82,16 +96,40 @@ try {
     console.error("Error generating coverage reports:", reportError.message);
   }
 } catch (error) {
-  console.error("Tests failed");
+  // Report the real cause: this used to print a bare "Tests failed" even when
+  // the tests never ran (e.g. a missing solution file).
+  console.error("Tests failed:", error.message);
+}
+
+// Recursively collect files whose basename matches, anchored at `dir`.
+// Replaces a `glob` require that was never declared in package.json and so
+// threw "Cannot find module 'glob'" on every run.
+function findFiles(dir, basename, found = []) {
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return found; // directory absent (no tests have run yet)
+  }
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      findFiles(full, basename, found);
+    } else if (entry.name === basename) {
+      found.push(full);
+    }
+  }
+  return found;
 }
 
 // Helper function to process all coverage files and remove GitHub URLs
 function processAllCoverageFiles() {
-// Find all coverage files
-const glob = require('glob');
-const coverageFiles = glob.sync('tests/**/coverage.cobertura.xml', { 
-  absolute: true 
-});
+  // Exact-basename match, so the processed.* files written below are not
+  // picked up and reprocessed on the next run.
+  const coverageFiles = findFiles(
+    path.join(repoRoot, "tests"),
+    "coverage.cobertura.xml",
+  );
 
   console.log(`Found ${coverageFiles.length} coverage files to process`);
 
