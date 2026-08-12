@@ -352,6 +352,14 @@ Because this decision reverses a written intent, two records need updating or th
 
 Every phase is independently reversible. Reversibility degrades left-to-right, so the irreversible steps come last and only after the estate is small.
 
+Each phase carries three lines. **Exit gate** is the check that must pass before the next phase begins — written as something to run or observe, not a sense of doneness. **Cut scope** is what to drop when appetite runs out, and what is not droppable. **Rollback** is the undo.
+
+**Two defensible stopping points.** After **Phase 2** the subdomain-takeover exposure is closed and the estate is 15 artifacts down to 3 live repos — most of the risk reduction in this document, at none of the risk. After **Phase 4** consolidation is complete without DNS or ownership ever being touched. Phases 5 and 6 are the only ones that can take down production or company email, and neither is load-bearing for the investor risk as stated.
+
+**Neither stopping point has actually been reached.** Execution ran 0 → 2 → 3 → 4 and skipped **Phase 1**, which is where the `docs.veritasvault.net` fix lives — §7's highest-severity finding. The estate now has the consolidation but not the security fix, the reverse of the order this section recommends. Phase 1 step 6 is the smallest outstanding item in the document carrying the largest risk.
+
+**Phase 5a has no entry below.** §5a (Vercel → Azure hosting) appears in the status table at the top but was never sequenced here: no steps, no exit gate, no rollback. Until it is written, treat it as unplanned work rather than as a phase.
+
 ### Phase 0 — Safety net _(fully reversible; do this first)_
 
 1. ~~**Mirror-clone all 15 artifacts** (`git clone --mirror`) to durable offline storage, including `phoenixvc/phoenix-marketdata` and `VeritasVault-ai/vv-docs-archive`.~~ **Done** — 87 MB at `C:\Users\smitj\backups\vv-estate-20260812`, full history verified. This was the precondition for every later step.
@@ -360,6 +368,10 @@ Every phase is independently reversible. Reversibility degrades left-to-right, s
 4. **Capture the Vercel Cron schedule** for `app/api/cron/sync/route.ts`. **Outstanding, and the easiest thing here to lose** — there is no `vercel.json`, so the schedule exists only in the dashboard and has no `env pull` equivalent (§5a). If it is lost, `sync-service` stops running after the Azure migration and nothing fails loudly.
 5. Screenshot Vercel project settings (Root Directory, build command, Node version, install command) for **both** `veritasvault-web` and `vv-game-suite`. **Outstanding.**
 6. Record the current `tsc --noEmit` error count for `veritasvault-web` as the §6 baseline. **Outstanding.**
+
+**Exit gate:** two mirrors chosen at random re-clone cleanly and their commit counts match the source (`git clone <mirror> tmp && git -C tmp rev-list --all --count`). The `vercel env pull` output is non-empty and stored outside git. The `tsc --noEmit` baseline is written down as an integer. A mirror never restored from is not a backup.
+
+**Cut scope:** none. Every rollback in this document dereferences step 1, and steps 2–4 are the only copies of configuration that exists nowhere in git. If only one phase gets done, it is this one — its absence is what makes each of the others unsafe.
 
 **Rollback:** nothing changed.
 
@@ -373,6 +385,10 @@ Every phase is independently reversible. Reversibility degrades left-to-right, s
 9. Fix the `wss://api.yourdomain.com` placeholder.
 10. Enable branch protection on `vv` and `vv-landing` (1 review + required checks).
 
+**Exit gate:** `dig docs.veritasvault.net` returns NXDOMAIN from a resolver past the old TTL — not merely a record deleted in the GoDaddy UI. `vercel.json` is committed **and** a preview deploy built green with it in place. Exactly one lockfile remains in the tree. `gh api repos/JustAGhosT/veritasvault/branches/main/protection` returns 200, likewise for `veritasvault-web` — both under their Phase 4 names, since that phase ran first. `www.veritasvault.net` still 200.
+
+**Cut scope:** steps 8–10 defer to Phase 7 at no cost. Steps 6 and 7 do not. Step 6 is the security fix and the reason this phase exists; step 7 is the precondition for every Vercel-touching step from Phase 4 onward — a `vercel.json` written after the repo moves records the post-move state, which is not the state worth capturing.
+
 **Rollback:** revert commits; re-add the DNS record from the Phase 0 export.
 
 ### Phase 2 — Archive the dead _(reversible — archiving is a toggle, not a delete)_
@@ -380,6 +396,19 @@ Every phase is independently reversible. Reversibility degrades left-to-right, s
 11. Archive, in this order: `vv-chain`, `vv-docs-v1`, `vv-documentation`, `vv-auth-frontend-demo`, `veritasvault-cognitive-mesh-nexus`, `vv-auth`, `vv-chain-services`, `vv-dev-tools`, `phoenixvc/phoenix-marketdata`.
 12. Before archiving `vv-dev-tools`, confirm its SendGrid cron is disabled so archiving cannot re-trigger mail.
 13. Leave `vv-docs` archived as-is; leave `vv-game-suite` **active** (live deployment).
+
+**Exit gate:** the estate's live set is exactly four repos —
+
+```bash
+gh repo list JustAGhosT --limit 100 --json name,isArchived \
+  --jq '.[]|select(.isArchived==false)|.name' | grep -E '^(veritasvault|vv-)'
+```
+
+returns `veritasvault`, `veritasvault-web`, `vv-game-suite`, `vv-iac` and nothing else. Scope the filter: the account holds 80+ unrelated repos, so an unfiltered listing tells you nothing. Then `phoenixvc/phoenix-marketdata` and `vv-docs` both read `isArchived: true`, no Actions run fires on any newly archived repo over the following 24h, and `games.veritasvault.net` still 200.
+
+`vv-iac` is the deliberate fourth: it stays active until PR #28 merges its subtree into `veritasvault` (Phase 3), and archives only then. **That archive is an open follow-up** — step 11's list never included it, so nothing in this document currently closes it out.
+
+**Cut scope:** step 11's list can shrink to `vv-dev-tools` alone and still bank the phase's only live side-effect. The other eight are bookkeeping — archiving them is what makes the fifteen-artifact count stop being true, but leaving one unarchived breaks nothing downstream. Step 12 is not droppable if `vv-dev-tools` is archived at all.
 
 **Rollback:** un-archive. No history is touched. **Do not delete any repo at any point in this plan.**
 
@@ -390,6 +419,10 @@ Every phase is independently reversible. Reversibility degrades left-to-right, s
 16. Fix `vv/package.json`: `name` → `veritasvault`, drop the stale `phoenixvc/phoenix-market-data` repository URL.
 17. Keep `vv`'s `build-and-test.yml` green throughout; fix or delete the failing `.spellcheck.yml`.
 
+**Exit gate:** `git log --follow infra/github/Create-VVRepos.ps1` shows commits dated before the merge. That one command is the phase — it is exactly the check that would have caught the `phoenix-marketdata` → `vv` history loss (§1 finding #4) at the moment it happened. Then: `build-and-test.yml` green on the merge commit, and `grep -r phoenix-market-data` returning nothing.
+
+**Cut scope:** step 15 (`vv-chain` at `contracts/`) is droppable — 3 commits, 11 KB, a dead scaffold whose only value is already preserved by archiving it in Phase 2. Step 14 is not: `vv-iac/github/` is the estate's sole record of its own origin (§4.3), and leaving it in a separate dead repo is precisely the fragmentation this document exists to remove.
+
 **Rollback:** revert the subtree merge commits; the source repos still exist (archived, not deleted).
 
 > **Hazard:** do **not** use `git filter-repo`, squash-merge, or a fresh-copy import for these merges — any of those destroys history, which is exactly the mistake that produced `vv` from `phoenix-marketdata` and lost that lineage. Subtree merge only.
@@ -399,6 +432,10 @@ Every phase is independently reversible. Reversibility degrades left-to-right, s
 18. Rename `vv` → `veritasvault`.
 19. Rename `vv-landing` → `veritasvault-web`.
 20. Verify the Vercel integration survived the rename (it should — rename preserves the repo ID) and that a preview deploy still builds.
+
+**Exit gate:** `gh api repos/JustAGhosT/veritasvault-web --jq .id` returns the same numeric ID `vv-landing` carried before the rename — proof it was renamed, not recreated, which is the failure mode that loses the env vars (§4.1). A preview deploy builds from the renamed repo, and `www.veritasvault.net` serves a deployment newer than the rename.
+
+**Cut scope:** step 19 is the droppable half. `vv-landing` is the one wired to production and its name is the lower-value end of the change; renaming `vv` → `veritasvault` alone puts the brand-correct name on the repo that will carry it. Dropping the phase entirely costs nothing structurally — Phase 6 transfers `vv` and `vv-landing` under their old names just as well.
 
 **Rollback:** rename back. GitHub redirects both ways.
 
@@ -411,6 +448,10 @@ Every phase is independently reversible. Reversibility degrades left-to-right, s
 25. Verify by querying the Azure DNS nameservers **directly**, before delegation: apex A, `www`, `games`, MX, SPF, Google verification.
 26. Cut NS at GoDaddy → Azure DNS. Watch mail flow and `https://www.veritasvault.net` continuously.
 
+**Exit gate:** before delegation — `dig @<azure-ns> veritasvault.net {A,MX,TXT}` and `dig @<azure-ns> {www,games}.veritasvault.net` return answers matching the Phase 0 GoDaddy export record for record, with **no `docs` record**. After delegation — a message delivered _to_ and sent _from_ an `@veritasvault.net` address, `www` and `games` both 200, and the Vercel certificate still valid rather than pending re-issue. The mail check is the gate: the web checks pass while email is silently dead.
+
+**Cut scope:** the whole phase is droppable and everything else here still stands. Its security value was banked in Phase 1 step 6 — the dangling CNAME is gone whether or not the zone ever moves. What remains is infrastructure hygiene bought at the price of the one step that can take company email down. If dropped, still land `products/veritasvault.yaml` in `neuralliquid-org` (Phase 6 step 31 needs it regardless) and leave the zone at GoDaddy.
+
 **Rollback:** restore GoDaddy NS from the Phase 0 export. Propagation-bound, not instant — hence the TTL staging.
 
 ### Phase 6 — Org transfer _(least reversible; do last)_
@@ -422,6 +463,10 @@ Every phase is independently reversible. Reversibility degrades left-to-right, s
 31. Add `products/veritasvault.yaml` to `neuralliquid-org` if Phase 5 has not already created it, and update `docs/inventory/dns.md`.
 32. Correct the stale records that name `phoenixvc` (§8): baton project description, and annotate `Create-VVRepos.ps1`.
 
+**Exit gate:** a **production** deploy — not a preview — triggered from the transferred `veritasvault-web` and confirmed at `www.veritasvault.net` by a deployment ID newer than the transfer. Both repos public under `neuralliquid`. Branch protection re-applied, since the transfer drops it. Every Actions secret re-added, verified by one green run per workflow rather than by reading the settings page.
+
+**Cut scope:** step 29 (`vv-game-suite`) is already optional and leaving it is the lower-risk default. The larger available cut is to transfer `veritasvault` only and leave `veritasvault-web` under `JustAGhosT` indefinitely — the .NET repo has no Vercel coupling, so it carries none of this phase's risk, and split ownership is a smaller problem than a broken production deploy. Steps 30–32 are not droppable: a transferred repo with missing secrets and records still naming `phoenixvc` is worse than one never transferred.
+
 **Rollback:** transfer back (possible, but each hop re-breaks the Vercel integration). Treat as one-way in practice.
 
 ### Phase 7 — Quality baseline _(ongoing, no migration risk)_
@@ -429,6 +474,12 @@ Every phase is independently reversible. Reversibility degrades left-to-right, s
 33. Add the typecheck-regression gate against the Phase 0 baseline; burn it down; flip `ignoreBuildErrors` only at zero.
 34. Introduce the first tests to `veritasvault-web` — start with the 45 API routes, which are the highest-value, lowest-effort surface.
 35. Cut `v0.1.0` tags on both survivors — the estate's first releases.
+
+**Exit gate:** none — nothing follows this phase. _Started_ is verifiable though: the regression check fails on a deliberately introduced type error, and `gh api repos/<owner>/veritasvault/releases` returns a non-empty array, closing §1's zero-releases finding. `<owner>` is `JustAGhosT` unless Phase 6 has unblocked — this phase does not depend on the transfer.
+
+**Cut scope:** step 34 is a project, not a step. Tests across 45 API routes should be scoped and staffed on their own terms, not smuggled in as the tail of a migration. Steps 33 and 35 are hours of work each and close two measured findings — do those regardless.
+
+**Rollback:** n/a — nothing here touches the estate's shape.
 
 ---
 
