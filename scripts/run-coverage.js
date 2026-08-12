@@ -7,6 +7,10 @@
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const {
+  clearPreviousTestResults,
+  processCoverageFiles,
+} = require("./lib/coverage-files");
 
 // ANSI colors for terminal output
 const colors = {
@@ -21,6 +25,7 @@ const colors = {
 // Anchor every path to the repo root rather than process.cwd(), so this works
 // from a subdirectory or a git worktree. This file lives in <repoRoot>/scripts/.
 const repoRoot = path.resolve(__dirname, "..");
+const testsDir = path.join(repoRoot, "tests");
 
 console.log(
   `${colors.cyan}Running tests and generating coverage reports...${colors.reset}`,
@@ -35,6 +40,7 @@ try {
   if (!fs.existsSync(solutionPath)) {
     throw new Error(`Solution file not found: ${solutionPath}`);
   }
+  clearPreviousTestResults(testsDir);
   // Bare filename + cwd, so a repo path containing spaces never has to survive
   // shell quoting.
   execSync("dotnet test vv.Platform.sln", { stdio: "inherit", cwd: repoRoot });
@@ -46,13 +52,17 @@ try {
   );
 
   try {
-    // Check if reportgenerator is installed
-    try {
-      execSync("reportgenerator -version", { stdio: "pipe" });
+    // Check if reportgenerator is installed. Probing with `reportgenerator
+    // -version` does not work: it exits 1 with "No report files specified",
+    // so the check always failed and every run took the install branch.
+    const installedTools = execSync("dotnet tool list -g", {
+      encoding: "utf8",
+    });
+    if (installedTools.includes("dotnet-reportgenerator-globaltool")) {
       console.log(
         `${colors.green}✅ ReportGenerator is already installed${colors.reset}`,
       );
-    } catch (error) {
+    } else {
       console.log(
         `${colors.yellow}Installing ReportGenerator tool...${colors.reset}`,
       );
@@ -83,14 +93,17 @@ try {
     console.log(
       `${colors.yellow}Pre-processing coverage files to remove GitHub URLs...${colors.reset}`,
     );
-    processAllCoverageFiles();
+    processCoverageFiles(testsDir, (msg) =>
+      console.log(`${colors.blue}${msg}${colors.reset}`),
+    );
 
     // Run ReportGenerator on the processed files
     execSync(
-      `reportgenerator "-reports:tests/**/TestResults/**/processed.coverage.cobertura.xml" "-targetdir:${reportDir}" "-reporttypes:Html" "-sourcedirs:${process.cwd()}" "-verbosity:Warning"`,
+      `reportgenerator "-reports:tests/**/TestResults/**/processed.coverage.cobertura.xml" "-targetdir:${reportDir}" "-reporttypes:Html" "-sourcedirs:${repoRoot}" "-verbosity:Warning"`,
       {
         stdio: "inherit",
         shell: true,
+        cwd: repoRoot,
       },
     );
 
@@ -120,51 +133,4 @@ try {
     `${colors.red}❌ Tests failed: ${error.message}${colors.reset}`,
   );
   process.exit(1);
-}
-
-// Helper function to process all coverage files and remove GitHub URLs
-function processAllCoverageFiles() {
-  // Find all coverage files (in a cross-platform way)
-  let coverageFiles = [];
-
-  if (process.platform === "win32") {
-    // Windows
-    const findCommand = `dir /s /b tests\\*coverage.cobertura.xml`;
-    coverageFiles = execSync(findCommand, { encoding: "utf8", shell: true })
-      .split("\r\n")
-      .filter((file) => file.trim() !== "");
-  } else {
-    // Unix-based systems (Linux, macOS)
-    const findCommand = `find tests -name "*coverage.cobertura.xml"`;
-    coverageFiles = execSync(findCommand, { encoding: "utf8", shell: true })
-      .split("\n")
-      .filter((file) => file.trim() !== "");
-  }
-
-  console.log(
-    `${colors.blue}Found ${coverageFiles.length} coverage files to process${colors.reset}`,
-  );
-
-  // Process each file
-  coverageFiles.forEach((filePath) => {
-    if (!filePath || !fs.existsSync(filePath)) return;
-
-    // Read the coverage file
-    const content = fs.readFileSync(filePath, "utf8");
-
-    // Replace any GitHub URLs with local paths
-    const processed = content.replace(
-      /https:\/\/raw\.githubusercontent\.com\/[^"]+\/src\//g,
-      "src/",
-    );
-
-    // Write to a new file
-    const dir = path.dirname(filePath);
-    const processedPath = path.join(dir, "processed.coverage.cobertura.xml");
-    fs.writeFileSync(processedPath, processed);
-
-    console.log(
-      `${colors.blue}Processed: ${filePath} → ${processedPath}${colors.reset}`,
-    );
-  });
 }
