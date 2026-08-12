@@ -1,9 +1,16 @@
 # Phase 1 Test Plan — VeritasVault Estate
 
-Spike output. Prioritised plan to close the automated-testing gap across `JustAGhosT/vv-landing`
-(Next.js 15 web platform) and `JustAGhosT/vv` (this repo, .NET).
+Spike output. Prioritised plan to close the automated-testing gap across
+`neuralliquid/veritasvault-web` (Next.js 15 web platform) and `neuralliquid/veritasvault`
+(this repo, .NET).
 
 Date: 2026-08-12. All figures below were measured, not estimated; method is stated inline.
+
+> **Repo identity.** Both repos changed **org and name**: `JustAGhosT/vv` →
+> `neuralliquid/veritasvault`, and `JustAGhosT/vv-landing` → `neuralliquid/veritasvault-web`.
+> Every old URL still resolves via GitHub's redirect, and `git remote -v` in this worktree still
+> prints the old one — so stale names survive review unchallenged. Verify identity with
+> `gh repo view --json nameWithOwner` and compare the string; a URL that loads proves nothing.
 
 ---
 
@@ -17,7 +24,7 @@ the first tests would have to cover. These are not hypothetical failure modes:
 
 | #   | Finding                                                                                                                                  | Evidence                                                                                                                                                                                                                                                  | Status                                                                                           |
 | --- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| 1   | `PUT /api/settings/{key}` is an **unauthenticated write** to the production settings table using the **service-role key** (bypasses RLS) | [`app/api/settings/[key]/route.ts`](https://github.com/JustAGhosT/vv-landing/blob/main/app/api/settings/%5Bkey%5D/route.ts) imports `createClient` from `lib/supabase.ts`, whose server branch uses `SUPABASE_SERVICE_ROLE_KEY`; no auth call in the file | Reachable from the public internet                                                               |
+| 1   | `PUT /api/settings/{key}` is an **unauthenticated write** to the production settings table using the **service-role key** (bypasses RLS) | [`app/api/settings/[key]/route.ts`](https://github.com/neuralliquid/veritasvault-web/blob/main/app/api/settings/%5Bkey%5D/route.ts) imports `createClient` from `lib/supabase.ts`, whose server branch uses `SUPABASE_SERVICE_ROLE_KEY`; no auth call in the file | Reachable from the public internet                                                               |
 | 2   | `GET /api/settings` dumps the whole settings table, same client, no auth                                                                 | same file + `app/api/settings/route.ts`                                                                                                                                                                                                                   | Reachable                                                                                        |
 | 3   | JWT signing/verification **falls back to a hardcoded secret committed to the repo**                                                      | `lib/auth/auth-utils.ts:6` — `process.env.JWT_SECRET \|\| "your-secret-key-at-least-32-chars-long"`                                                                                                                                                       | Fails **open**: if the env var is unset, anyone can forge a valid session                        |
 | 4   | Route-level auth enforcement is **dead code**                                                                                            | `lib/auth/auth-middleware.ts` exports `checkAuthStatus`/`isProtectedRoute`; repo-wide grep finds **zero importers**. `middleware.ts` only blocks WordPress probes and sets headers                                                                        | No edge auth on `/std\|corp/dashboard`, `/settings`, `/analytics`, …                             |
@@ -126,7 +133,7 @@ separate task, and doing so will surface two previously-unrun tests that may not
 
 ### Re-baselined figures — measured
 
-Run [31549457020](https://github.com/JustAGhosT/veritasvault/actions/runs/31549457020), first green
+Run [31549457020](https://github.com/neuralliquid/veritasvault/actions/runs/31549457020), first green
 build with corrected collection. 69 tests across two projects (64 Infrastructure, 5 Api); 62 passed,
 7 skipped.
 
@@ -256,11 +263,12 @@ performed in SonarCloud by someone with admin on the project:
    false assurance this change removes.
 3. **Project key — resolved, no action needed.** The key is **`JustAGhosT_vv`**, verified from the
    SonarCloud check URL on PR #31 (`sonarcloud.io/dashboard?id=JustAGhosT_vv`). Worth recording why
-   the obvious guess was wrong: **the repo was renamed `vv` → `veritasvault`**, and
-   `https://github.com/JustAGhosT/vv.git` still resolves only because GitHub redirects renamed
-   repos. A SonarCloud key is fixed at import time and does **not** follow a rename, so the _old_
-   name is the live one. The workflow uses this value and keeps
-   `SONAR_PROJECT_KEY` / `SONAR_ORGANIZATION` repository variables as overrides.
+   the obvious guess was wrong: **this repo changed both org and name** — `JustAGhosT/vv` →
+   `neuralliquid/veritasvault` — and `https://github.com/JustAGhosT/vv.git` still resolves only
+   because GitHub redirects. A SonarCloud key is fixed at import time and follows **neither** a
+   rename nor an org move, so the oldest name is the live one. Deriving the key from the current
+   slug would have pointed analysis at a project that does not exist. The workflow uses the verified
+   value and keeps `SONAR_PROJECT_KEY` / `SONAR_ORGANIZATION` repository variables as overrides.
 4. **Add the gate condition.** SonarCloud → _Quality Gates_ → the gate applied to this project →
    _Add Condition_ → On New Code → **Coverage** → **is less than 70%**. Keep the existing
    A-reliability-on-new-code condition.

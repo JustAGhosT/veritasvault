@@ -76,8 +76,9 @@ jobs:
       #
       # Project key is `JustAGhosT_vv` — VERIFIED from the SonarCloud check URL on
       # PR #31 (sonarcloud.io/dashboard?id=JustAGhosT_vv), not derived from the repo
-      # slug. The repo was renamed vv -> veritasvault but a SonarCloud key is fixed
-      # at import time and does NOT follow a rename, so the old name is the live one.
+      # slug. This repo changed both org and name (JustAGhosT/vv ->
+      # neuralliquid/veritasvault); a SonarCloud key is fixed at import time and
+      # follows NEITHER, so the oldest name is the live one.
       # Both values stay overridable via repository variables
       # (Settings > Secrets and variables > Actions > Variables).
       - name: SonarCloud begin
