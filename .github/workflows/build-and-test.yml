@@ -27,7 +27,7 @@ jobs:
 
       # SonarScanner for .NET runs on the JVM.
       - name: Setup JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
@@ -74,12 +74,12 @@ jobs:
       # `end` must follow the tests. It does NOT read sonar-project.properties —
       # analysis parameters have to be passed here as /d: arguments.
       #
-      # Project key/org default to the current repo slug but are overridable via
-      # repository variables (Settings > Secrets and variables > Actions > Variables),
-      # because a SonarCloud key is fixed at import time and does NOT follow a repo
-      # rename. This repo was renamed vv -> veritasvault, so if the Sonar project was
-      # imported before the rename its key is still `JustAGhosT_vv`. Check the project's
-      # Information page and set SONAR_PROJECT_KEY if the default is wrong.
+      # Project key is `JustAGhosT_vv` — VERIFIED from the SonarCloud check URL on
+      # PR #31 (sonarcloud.io/dashboard?id=JustAGhosT_vv), not derived from the repo
+      # slug. The repo was renamed vv -> veritasvault but a SonarCloud key is fixed
+      # at import time and does NOT follow a rename, so the old name is the live one.
+      # Both values stay overridable via repository variables
+      # (Settings > Secrets and variables > Actions > Variables).
       - name: SonarCloud begin
         if: steps.sonar_check.outputs.enabled == 'true'
         env:
@@ -87,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           dotnet sonarscanner begin \
-            /k:"${{ vars.SONAR_PROJECT_KEY || 'JustAGhosT_veritasvault' }}" \
+            /k:"${{ vars.SONAR_PROJECT_KEY || 'JustAGhosT_vv' }}" \
             /o:"${{ vars.SONAR_ORGANIZATION || 'justaghost' }}" \
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
