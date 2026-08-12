@@ -253,17 +253,27 @@ incumbent using the word as a financial-services brand.
 
 **Killed, with evidence:**
 
-| Candidate | Why it died                                                                                                                                                  |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Keel      | 6+ RIAs: Keel Wealth Management, Keel Financial Partners, Keel Capital Management, On Keel Capital, WealthKeel                                               |
-| **Spike** | Spike Financial (Houston), Spike Wallet, Spike Payments — and **Spike (Cape Town, 2018, open-banking API)**, a South African fintech. Home-market collision. |
-| Filament  | Filament Inc — blockchain/DLT for IIoT, $39.8M raised, Verizon-backed. Adjacent to VeritasVault's own space.                                                 |
-| Assay     | Assay Wealth Partners (Dallas RIA), Regent Assay Corporate Finance (UK M&A), Assay Advisory (London PE/VC), Assay AI                                         |
-| Crucible  | Crucible Capital ($50M fund, Nomura-anchored) and Crucible Fintech                                                                                           |
-| Vernier   | Vernier Capital Partners (hedge fund); Vernier Capital Advisors — serves _"wealth managers, private banks, institutional investors"_                         |
-| Gnomon    | Gnomon Capital (PE, invests in financial services/fintech); Gnomon Alpha (global macro hedge fund)                                                           |
-| Verax     | Verax Capital Partners, Verax Investments, Verax Partners, Verax Business Group                                                                              |
-| Faraday   | **Faraday Capital** — _"specialist wealth management company"_; Faraday Capital LP (RIA); Faraday Venture Partners (fintech VC); plus Faraday Future         |
+| Candidate | Why it died                                                                                                                                                                                                                                                                                           |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Keel      | 6+ RIAs: Keel Wealth Management, Keel Financial Partners, Keel Capital Management, On Keel Capital, WealthKeel                                                                                                                                                                                        |
+| **Spike** | Spike Financial (Houston), Spike Wallet, Spike Payments — and **Spike (Cape Town, 2018, open-banking API)**, a South African fintech. Home-market collision.                                                                                                                                          |
+| Filament  | Filament Inc — blockchain/DLT for IIoT, $39.8M raised, Verizon-backed. Adjacent to VeritasVault's own space.                                                                                                                                                                                          |
+| Assay     | Assay Wealth Partners (Dallas RIA), Regent Assay Corporate Finance (UK M&A), Assay Advisory (London PE/VC), Assay AI                                                                                                                                                                                  |
+| Crucible  | Crucible Capital ($50M fund, Nomura-anchored) and Crucible Fintech                                                                                                                                                                                                                                    |
+| Vernier   | Vernier Capital Partners (hedge fund); Vernier Capital Advisors — serves _"wealth managers, private banks, institutional investors"_                                                                                                                                                                  |
+| Gnomon    | Gnomon Capital (PE, invests in financial services/fintech); Gnomon Alpha (global macro hedge fund)                                                                                                                                                                                                    |
+| Verax     | Verax Capital Partners, Verax Investments, Verax Partners, Verax Business Group                                                                                                                                                                                                                       |
+| Faraday   | **Faraday Capital** — _"specialist wealth management company"_; Faraday Capital LP (RIA); Faraday Venture Partners (fintech VC); plus Faraday Future                                                                                                                                                  |
+| MoneyMint | **Money Mint** — broker research, charting indicators, trading bots, "Trade Assist EA", live on both app stores; plus moneymint.com and moneymint.app (live consumer products) and the wider Mint cluster (Intuit Mint, mint Finance UK, MINT Fintech Group). `.com`, `.io`, `.co`, `.app` all taken. |
+
+> **On MoneyMint specifically** (raised late, screened after the decision): beyond the
+> collisions, it fails structurally. "Money" is generic for financial services and "Mint" is
+> saturated, so a compound of two weak elements attracts thin protection in class 36 — you
+> would own almost nothing and could not stop a near-copy. It also reads consumer-budgeting
+> rather than private-client, which is a positioning mismatch with this deck, and it repeats
+> the TrueMoney lesson that generic sector words attract collisions by construction. The
+> "minting" echo that makes Muniment memorable is a free bonus riding on a distinctive word;
+> making it literal trades the distinctiveness away.
 
 **Survivors — no financial-services incumbent found, `.finance` available:**
 
