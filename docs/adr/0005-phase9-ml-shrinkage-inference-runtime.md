@@ -1,3 +1,17 @@
+---
+document_type: architecture
+classification: internal
+status: review
+version: 0.1.0
+last_updated: '2026-08-12'
+applies_to:
+- Core
+reviewers:
+- '@tech-lead'
+priority: p1
+next_review: '2026-11-12'
+---
+
 # ADR-0005 — Phase 9 ML shrinkage inference: hand-written forward pass in Rust
 
 | | |
