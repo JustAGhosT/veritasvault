@@ -3,16 +3,16 @@ document_type: guide
 classification: internal
 status: draft
 version: 0.1.0
-last_updated: '2025-05-31'
+last_updated: "2025-05-31"
 applies_to:
-- Core
+  - Core
 reviewers:
-- '@tech-lead'
+  - "@tech-lead"
 priority: p2
-next_review: '2026-05-31'
+next_review: "2026-05-31"
 ---
 
-```src/vv.Domain/Docs/Domains/Asset/black-litterman-model.md
+````src/vv.Domain/Docs/Domains/Asset/black-litterman-model.md
 # Black-Litterman Model
 
 > Mathematical formulation of the Black-Litterman approach
@@ -152,14 +152,24 @@ Where $T$ is the effective number of observations used to estimate $\Sigma$.
 
 ### View Uncertainty (Ω)
 
+> **ERRATA — see ADR-0001 §D1**
+> (`docs/adr/0001-black-litterman-model-conventions.md`, repository root).
+> **Option 2 below is withdrawn.** At $c_i = 1$ it leaves $\Omega \neq 0$, so the
+> view does not bind and $P\mu_{BL} \neq Q$ — contradicting the sanity check in
+> [black-litterman-validation.md](./black-litterman-validation.md) §Verification
+> Techniques, item 2. The confidence-bearing form adopted for implementation is
+> the one in [black-litterman-implementation.md](./black-litterman-implementation.md)
+> `calibrate_omega`: $\Omega_{ii} = (P(\tau\Sigma)P^T)_{ii}\cdot(1-c_i)/c_i$.
+> Option 1 remains correct and is the implementation default.
+
 Several approaches exist for calibrating $\Omega$:
 
 1. **Proportional to Prior Variance**:
    $$\Omega = \text{diag}(P(\tau\Sigma)P^T)$$
 
-2. **Confidence-Based**:
+2. **Confidence-Based** *(withdrawn — see errata above)*:
    $$\Omega_{ii} = \frac{1}{c_i} (P\Sigma P^T)_{ii}$$
-   
+
    Where $c_i$ is the confidence in view $i$, scaled from 0 to 1.
 
 3. **Historical Method**:
@@ -170,6 +180,21 @@ Several approaches exist for calibrating $\Omega$:
 The optimal portfolio weights using the Black-Litterman expected returns are:
 
 $$w_{BL} = (\lambda\Sigma)^{-1}\mu_{BL}$$
+
+> **ERRATA — see ADR-0001 §D2**
+> (`docs/adr/0001-black-litterman-model-conventions.md`, repository root).
+> The risk matrix in this expression is an explicit implementation choice, not a
+> given. Using $\Sigma$ (as written above) is the implementation default and is
+> the only choice under which the equilibrium round-trip $w_{BL} = w_{mkt}$ holds
+> exactly. He & Litterman use the posterior $\Sigma_p = \Sigma + M$, under which
+> the round-trip holds up to a factor $1/(1+\tau)$. Golden-vector fixtures must
+> state which convention they assume — most failures to reproduce published
+> results are convention mismatches rather than arithmetic errors.
+>
+> Note also that $\mu_{BL}$ is **invariant to $\tau$** under both implemented
+> default $\Omega$ calibrations, because $\Omega \propto \tau$ makes $\tau$
+> cancel in the expression above. $M \propto \tau$, so the posterior covariance
+> is not invariant.
 
 ## Practical Considerations
 
@@ -223,23 +248,24 @@ from scipy import linalg
 def black_litterman(Sigma, w_mkt, P, Q, tau=0.025, lambda_=2.5, Omega=None):
     # Calculate implied returns
     Pi = lambda_ * Sigma @ w_mkt
-    
+
     # Set default Omega if not provided
     if Omega is None:
         Omega = np.diag(np.diag(tau * P @ Sigma @ P.T))
-    
+
     # Calculate posterior distribution parameters
     M = np.linalg.inv(np.linalg.inv(tau * Sigma) + P.T @ np.linalg.inv(Omega) @ P)
     mu_BL = M @ (np.linalg.inv(tau * Sigma) @ Pi + P.T @ np.linalg.inv(Omega) @ Q)
-    
+
     # Calculate optimal weights
     w_BL = np.linalg.inv(lambda_ * Sigma) @ mu_BL
-    
+
     return mu_BL, w_BL
-```
+````
 
 For further details on specific aspects of the model, see:
-* [Black-Litterman Overview](./black-litterman-overview.md)
-* [Black-Litterman Views](./black-litterman-views.md)
-* [Black-Litterman Implementation](./black-litterman-implementation.md)
-* [Black-Litterman Validation](./black-litterman-validation.md)
+
+- [Black-Litterman Overview](./black-litterman-overview.md)
+- [Black-Litterman Views](./black-litterman-views.md)
+- [Black-Litterman Implementation](./black-litterman-implementation.md)
+- [Black-Litterman Validation](./black-litterman-validation.md)
