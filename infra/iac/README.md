@@ -22,6 +22,7 @@ This directory contains all Infrastructure as Code configurations for our enviro
 ## Tools
 
 This workspace supports multiple IaC tools:
+
 - Bicep (Azure)
 - Terraform
 - ARM Templates

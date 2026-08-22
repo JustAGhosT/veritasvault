@@ -11,11 +11,7 @@
       "variables": {
         "environment": {
           "default": "prod",
-          "enum": [
-            "dev",
-            "test",
-            "prod"
-          ]
+          "enum": ["dev", "test", "prod"]
         }
       }
     }
@@ -255,10 +251,7 @@
             "items": {
               "type": "string"
             },
-            "example": [
-              "Add more collateral",
-              "Reduce debt"
-            ]
+            "example": ["Add more collateral", "Reduce debt"]
           },
           "analysisTimestamp": {
             "type": "string",

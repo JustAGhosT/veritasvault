@@ -1,7 +1,5 @@
 # VeritasVault.ai vv-iac
 
-
-
 ## Deployment FLow
 
 ```mermaid
@@ -37,27 +35,27 @@ flowchart TD
   DevCode --> PR
   PR --> CodeReview
   CodeReview --> MergeToDev
-  
+
   MergeToDev --> BuildTest
   BuildTest --> Lint
   Lint --> UnitTests
   UnitTests --> IntegrationTests
   IntegrationTests --> PackageArtifacts
-  
+
   PackageArtifacts --> WhatIf
   WhatIf --> InfraDeploy
   InfraDeploy --> ConfigUpdate
-  
+
   ConfigUpdate --> DevEnv
   DevEnv -- "Manual Approval" --> TestEnv
   TestEnv -- "Manual Approval" --> StagingEnv
   StagingEnv -- "Manual Approval" --> ProdEnv
-  
+
   classDef workflow fill:#f9f,stroke:#333,stroke-width:2px
   classDef cicd fill:#cfc,stroke:#333,stroke-width:2px
   classDef infra fill:#cef,stroke:#333,stroke-width:2px
   classDef deploy fill:#fcc,stroke:#333,stroke-width:2px
-  
+
   class DevCode,PR,CodeReview,MergeToDev workflow
   class BuildTest,Lint,UnitTests,IntegrationTests,PackageArtifacts cicd
   class WhatIf,InfraDeploy,ConfigUpdate infra
